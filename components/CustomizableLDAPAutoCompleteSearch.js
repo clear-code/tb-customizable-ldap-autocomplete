@@ -85,7 +85,9 @@ function nsAbLDAPAutoCompleteSearch() {
 
 nsAbLDAPAutoCompleteSearch.prototype = {
   // For component registration
-  classID: Components.ID("227e6482-fe9f-441f-9b7d-7b60375e7449"),
+  // original class ID of Thunderbird's implementation:
+  // classID: Components.ID("227e6482-fe9f-441f-9b7d-7b60375e7449"),
+  classID: Components.ID("b66c5a40-964d-11e4-b4a9-0800200c9a66"),
 
   // A short-lived LDAP directory cache.
   // To avoid recreating components as the user completes, we maintain the most
