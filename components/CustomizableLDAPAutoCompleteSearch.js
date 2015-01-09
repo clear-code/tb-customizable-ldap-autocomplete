@@ -7,6 +7,12 @@ Components.utils.import("resource:///modules/mailServices.js");
 Components.utils.import("resource://gre/modules/Services.jsm");
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
+//======BEGINNING OF INSERTED SECTION======
+XPCOMUtils.defineLazyModuleGetter(this,
+                                  "LDAPAbCardFormatter",
+                                  "resource://customizable-ldap-autocomplete-modules/formatter.jsm");
+//======END OF INSERTED SECTION======
+
 const ACR = Components.interfaces.nsIAutoCompleteResult;
 const nsIAbAutoCompleteResult = Components.interfaces.nsIAbAutoCompleteResult;
 const nsIAbDirectoryQueryResultListener =
@@ -43,11 +49,19 @@ nsAbLDAPAutoCompleteResult.prototype = {
   },
 
   getValueAt: function getValueAt(aIndex) {
-    return this._searchResults[aIndex].value;
+    // return this._searchResults[aIndex].value;
+//======BEGINNING OF INSERTED SECTION======
+    var item = this._searchResults[aIndex];
+    return LDAPAbCardFormatter.valueFromCard(item.card, item.book, item.value);
+//======END OF INSERTED SECTION======
   },
 
   getCommentAt: function getCommentAt(aIndex) {
-    return this._commentColumn;
+    // return this._commentColumn;
+//======BEGINNING OF INSERTED SECTION======
+    var item = this._searchResults[aIndex];
+    return LDAPAbCardFormatter.commentFromCard(item.card, item.book, this._commentColumn);
+//======END OF INSERTED SECTION======
   },
 
   getStyleAt: function getStyleAt(aIndex) {
@@ -142,6 +156,9 @@ nsAbLDAPAutoCompleteSearch.prototype = {
     this._result._searchResults.splice(insertPosition, 0, {
       value: emailAddress,
       card: card,
+//======BEGINNING OF INSERTED SECTION======
+      book: this._book,
+//======END OF INSERTED SECTION======
     });
   },
 
