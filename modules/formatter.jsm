@@ -58,7 +58,7 @@ var LDAPAbCardFormatter = {
         Array.forEach(placeHolders, function(aPlaceHolder) {
           var matcher = new RegExp(aPlaceHolder.replace(/([\[\]])/g, '\\$1'));
           var attrName = aPlaceHolder.substring(1, aPlaceHolder.length - 1);
-          var value = this._getCardPropertyFromLDAPAttr(attrName, aCard, aBook);
+          var value = this._getCardPropertyFromLDAPAttrName(attrName, aCard, aBook);
           formatted = formatted.replace(matcher, value);
         }, this);
       }
@@ -70,9 +70,20 @@ var LDAPAbCardFormatter = {
     return aDefaultValue;
   },
 
-  _getCardPropertyFromLDAPAttr: function getCardPropertyFromLDAPAttr(aAttrName, aCard, aBook) {
-    //TODO: implement me!!
-    // See also: http://mxr.mozilla.org/comm-esr24/source/mailnews/addrbook/src/nsAbLDAPAutoCompFormatter.cpp
+  _getCardPropertyFromLDAPAttrName: function getCardPropertyFromLDAPAttrName(aAttrName, aCard, aBook) {
+    try {
+      var properties = aCard.properties;
+      while (properties.hasMoreElements()) {
+        let property = properties.getNext().QueryInterface(Components.interfaces.nsIProperty);
+        let ldapAttrNames = this._getStringValueFromBook("attrmap." + property.name, aBook).trim().split(/\s*,\s*/);
+        if (ldapAttrNames.indexOf(aAttrName) > -1)
+          return property.value;
+      }
+    }
+    catch(error) {
+      Components.utils.reportError(error);
+    }
+    return "";
   },
 
   _getStringValueFromBook: function getStringValueFromBook(aKey, aBook, aDefaultValue) {
@@ -82,7 +93,7 @@ var LDAPAbCardFormatter = {
     }
     catch(error) {
     }
-    var utf8value = aBook.getStringValue(aKey, globalValue || aDefaultValue);
+    var utf8value = aBook.getStringValue(aKey, globalValue || aDefaultValue || "");
     var unicodeValue = decodeURIComponent(escape(utf8value));
     return unicodeValue;
   }
