@@ -72,6 +72,7 @@ var LDAPAbCardFormatter = {
 
   _getCardPropertyFromLDAPAttr: function getCardPropertyFromLDAPAttr(aAttrName, aCard, aBook) {
     //TODO: implement me!!
+    // See also: http://mxr.mozilla.org/comm-esr24/source/mailnews/addrbook/src/nsAbLDAPAutoCompFormatter.cpp
   },
 
   _getStringValueFromBook: function getStringValueFromBook(aKey, aBook, aDefaultValue) {
