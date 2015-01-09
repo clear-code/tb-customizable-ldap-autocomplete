@@ -19,11 +19,11 @@ var LDAPAbCardFormatter = {
       var nameFormat    = this._getStringValueFromBook("autoComplete.nameFormat",
                                                        aBook,
                                                        this._defaultNameFormat);
-      var name          = this._formatWithCard(nameFormat, aCard);
+      var name          = this._resolveFormat(nameFormat, aCard, aBook);
       var addressFormat = this._getStringValueFromBook("autoComplete.addressFormat",
                                                        aBook,
                                                        this._defaultAddressFormat);
-      var address       = this._formatWithCard(addressFormat, aCard);
+      var address       = this._resolveFormat(addressFormat, aCard, aBook);
       if (address)
         return parser.makeMailboxObject(name, address).toString();
     }
@@ -38,7 +38,7 @@ var LDAPAbCardFormatter = {
       var format = this._getStringValueFromBook("autoComplete.commentFormat",
                                                 aBook,
                                                 this._defaultCommentFormat);
-      return this._formatWithCard(format, aCard, aDefaultValue);
+      return this._resolveFormat(format, aCard, aBook, aDefaultValue);
     }
     catch(error) {
       Components.utils.reportError(error);
@@ -47,9 +47,31 @@ var LDAPAbCardFormatter = {
   },
 
 
-  _formatWithCard: function formatWithCard(aFormat, aCard, aDefaultValue) {
+  _resolveFormat: function resolveFormat(aFormat, aCard, aBook, aDefaultValue) {
+    try {
+      var formatted = aFormat;
+
+      formatted = formatted.replace(/\{mail\}/g, aCard.primaryEmail);
+
+      var placeHolders = aFormat.match(/\[[^\]]+\]/g);
+      if (placeHolders) {
+        Array.forEach(placeHolders, function(aPlaceHolder) {
+          var matcher = new RegExp(aPlaceHolder.replace(/([\[\]])/g, '\\$1'));
+          var attrName = aPlaceHolder.substring(1, aPlaceHolder.length - 1);
+          var value = this._getCardPropertyFromLDAPAttr(attrName, aCard, aBook);
+          formatted = formatted.replace(matcher, value);
+        }, this);
+      }
+      return formatted;
+    }
+    catch(error) {
+      Components.utils.reportError(error);
+    }
     return aDefaultValue;
-    //XXX write codes to expand place holders in the format!
+  },
+
+  _getCardPropertyFromLDAPAttr: function getCardPropertyFromLDAPAttr(aAttrName, aCard, aBook) {
+    //TODO: implement me!!
   },
 
   _getStringValueFromBook: function getStringValueFromBook(aKey, aBook, aDefaultValue) {
