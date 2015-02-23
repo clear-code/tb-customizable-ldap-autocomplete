@@ -10,19 +10,32 @@ Components.utils.import("resource://gre/modules/Services.jsm");
 var parser = MailServices.headerParser;
 
 var LDAPAbCardFormatter = {
+  nameFormatFromBook: function nameFormatFromBook(aBook) {
+    return this._getStringValueFromBook("autoComplete.nameFormat",
+                                        aBook,
+                                        this._defaultNameFormat);
+  },
   _defaultNameFormat:    "[cn]",
+
+  addressFormatFromBook: function addressFormatFromBook(aBook) {
+    return this._getStringValueFromBook("autoComplete.addressFormat",
+                                        aBook,
+                                        this._defaultAddressFormat);
+  },
   _defaultAddressFormat: "{mail}",
+
+  commentFormatFromBook: function commentFormatFromBook(aBook) {
+    return this._getStringValueFromBook("autoComplete.commentFormat",
+                                        aBook,
+                                        this._defaultCommentFormat);
+  },
   _defaultCommentFormat: "[o]",
 
   valueFromCard: function labelFromCard(aCard, aBook, aDefaultValue) {
     try {
-      var nameFormat    = this._getStringValueFromBook("autoComplete.nameFormat",
-                                                       aBook,
-                                                       this._defaultNameFormat);
+      var nameFormat    = this.nameFormatFromBook(aBook);
       var name          = this._resolveFormat(nameFormat, aCard, aBook);
-      var addressFormat = this._getStringValueFromBook("autoComplete.addressFormat",
-                                                       aBook,
-                                                       this._defaultAddressFormat);
+      var addressFormat = this.addressFormatFromBook(aBook);
       var address       = this._resolveFormat(addressFormat, aCard, aBook);
       if (address)
         return parser.makeMailboxObject(name, address).toString();
@@ -35,9 +48,7 @@ var LDAPAbCardFormatter = {
 
   commentFromCard: function commentFromCard(aCard, aBook, aDefaultValue) {
     try {
-      var format = this._getStringValueFromBook("autoComplete.commentFormat",
-                                                aBook,
-                                                this._defaultCommentFormat);
+      var format = this.commentFormatFromBook(aBook);
       return this._resolveFormat(format, aCard, aBook, aDefaultValue);
     }
     catch(error) {
