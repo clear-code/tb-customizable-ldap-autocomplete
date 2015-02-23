@@ -11,6 +11,9 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 XPCOMUtils.defineLazyModuleGetter(this,
                                   "LDAPAbCardFormatter",
                                   "resource://customizable-ldap-autocomplete-modules/formatter.jsm");
+XPCOMUtils.defineLazyModuleGetter(this,
+                                  "prefs",
+                                  "resource://customizable-ldap-autocomplete-modules/prefs.js");
 //======END OF INSERTED SECTION======
 
 const ACR = Components.interfaces.nsIAutoCompleteResult;
@@ -108,10 +111,13 @@ nsAbLDAPAutoCompleteSearch.prototype = {
   // recently used address book, nsAbLDAPDirectoryQuery and search context.
   // However the cache is discarded if it has not been used for a minute.
   // This is done to avoid problems with LDAP sessions timing out and hanging.
-  _query: null,
-  _book: null,
-  _attributes: null,
-  _context: -1,
+//  _query: null,
+//  _book: null,
+//  _attributes: null,
+//  _context: -1,
+//======BEGINNING OF INSERTED SECTION======
+  _contexts: {},
+//======END OF INSERTED SECTION======
   _timer: null,
 
   // The current search result.
@@ -133,7 +139,10 @@ nsAbLDAPAutoCompleteSearch.prototype = {
     });
   },
 
-  _addToResult: function _addToResult(card) {
+//  _addToResult: function _addToResult(card) {
+//======BEGINNING OF INSERTED SECTION======
+  _addToResult: function _addToResult(card, book) {
+//======END OF INSERTED SECTION======
     let emailAddress =
       this._parser.makeMailboxObject(card.displayName,
                                      card.isMailList ?
@@ -157,7 +166,7 @@ nsAbLDAPAutoCompleteSearch.prototype = {
       value: emailAddress,
       card: card,
 //======BEGINNING OF INSERTED SECTION======
-      book: this._book,
+      book: book
 //======END OF INSERTED SECTION======
     });
   },
@@ -174,10 +183,13 @@ nsAbLDAPAutoCompleteSearch.prototype = {
     // Force the individual query items to null, so that the memory
     // gets collected straight away.
     this.stopSearch();
-    this._book = null;
-    this._context = -1;
-    this._query = null;
-    this._attributes = null;
+//    this._book = null;
+//    this._context = -1;
+//    this._query = null;
+//    this._attributes = null;
+//======BEGINNING OF INSERTED SECTION======
+    this._contexts = {};
+//======END OF INSERTED SECTION======
   },
 
   // nsIAutoCompleteSearch
@@ -225,6 +237,29 @@ nsAbLDAPAutoCompleteSearch.prototype = {
         acDirURI = Services.prefs.getCharPref("ldap_2.autoComplete.directoryServer");
     }
 
+//======BEGINNING OF INSERTED SECTION======
+    var acDirKeys = [];
+    if (acDirURI)
+      acDirKeys.push(acDirURI);
+    var directoryServers = prefs.getPref("ldap_2.autoComplete.directoryServers");
+    if (directoryServers) {
+      if (directoryServers == "*")
+        directoryServers = prefs.getChildren("ldap_2.servers.");
+      else
+        directoryServers = directoryServers.split(/([,\|]|\s+)/);
+
+      directoryServers = directoryServers.filter(function(aServer) {
+        var isPrimaryServer     = acDirURI && aServer == acDirURI;
+        var isDefaultPreference = aServer == "ldap_2.servers.default";
+        var isNotLDAPDirectory  = (prefs.getPref(aServer + ".dirType") || 0) !== 0;
+        return !isDefaultPreference && !isPrimaryServer && !isNotLDAPDirectory;
+      });
+      acDirKeys = acDirKeys.concat(directoryServers);
+      if (acDirKeys.length > 0)
+        acDirURI = acDirKeys[0];
+    }
+//======END OF INSERTED SECTION======
+
     if (!acDirURI) {
       // No directory to search, send a no match and return.
       aListener.onSearchResult(this, this._result);
@@ -233,66 +268,144 @@ nsAbLDAPAutoCompleteSearch.prototype = {
 
     this.stopSearch();
 
-    // If we don't already have a cached query for this URI, build a new one.
-    acDirURI = "moz-abldapdirectory://" + acDirURI;
-    if (!this._book || this._book.URI != acDirURI) {
-      this._query =
-        Components.classes["@mozilla.org/addressbook/ldap-directory-query;1"]
-                  .createInstance(Components.interfaces.nsIAbDirectoryQuery);
-      this._book = MailServices.ab.getDirectory(acDirURI)
-                                  .QueryInterface(Components.interfaces.nsIAbLDAPDirectory);
+//    // If we don't already have a cached query for this URI, build a new one.
+//    acDirURI = "moz-abldapdirectory://" + acDirURI;
+//    if (!this._book || this._book.URI != acDirURI) {
+//      this._query =
+//        Components.classes["@mozilla.org/addressbook/ldap-directory-query;1"]
+//                  .createInstance(Components.interfaces.nsIAbDirectoryQuery);
+//      this._book = MailServices.ab.getDirectory(acDirURI)
+//                                  .QueryInterface(Components.interfaces.nsIAbLDAPDirectory);
+//
+//      // Create a minimal map just for the display name and primary email.
+//      this._attributes =
+//        Components.classes["@mozilla.org/addressbook/ldap-attribute-map;1"]
+//                  .createInstance(Components.interfaces.nsIAbLDAPAttributeMap);
+//      this._attributes.setAttributeList("DisplayName",
+//        this._book.attributeMap.getAttributeList("DisplayName", {}), true);
+//      this._attributes.setAttributeList("PrimaryEmail",
+//        this._book.attributeMap.getAttributeList("PrimaryEmail", {}), true);
+//    }
 
-      // Create a minimal map just for the display name and primary email.
-      this._attributes =
-        Components.classes["@mozilla.org/addressbook/ldap-attribute-map;1"]
-                  .createInstance(Components.interfaces.nsIAbLDAPAttributeMap);
-      this._attributes.setAttributeList("DisplayName",
-        this._book.attributeMap.getAttributeList("DisplayName", {}), true);
-      this._attributes.setAttributeList("PrimaryEmail",
-        this._book.attributeMap.getAttributeList("PrimaryEmail", {}), true);
-//======BEGINNING OF INSERTED SECTION======
-      LDAPAbCardFormatter.requiredPropertiesFromBook(this._book).forEach(function(aProperty) {
-        var alreadyMapped = this._attributes.getAttributeList(aProperty);
-        if (alreadyMapped)
-          return;
-        this._attributes.setAttributeList(aProperty,
-          this._book.attributeMap.getAttributeList(aProperty, {}), true);
-      }, this);
-//======END OF INSERTED SECTION======
-    }
-
-    this._result._commentColumn = this._book.dirName;
+//    this._result._commentColumn = this._book.dirName;
     this._listener = aListener;
     this._timer.init(this, 60000, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
 
-    var args =
+//    var args =
+//      Components.classes["@mozilla.org/addressbook/directory/query-arguments;1"]
+//                .createInstance(Components.interfaces.nsIAbDirectoryQueryArguments);
+//
+//    var filterTemplate = this._book.getStringValue("autoComplete.filterTemplate", "");
+//
+//    // Use default value when preference is not set or it contains empty string    
+//    if (!filterTemplate)
+//      filterTemplate = "(|(cn=%v1*%v2-*)(mail=%v1*%v2-*)(sn=%v1*%v2-*))";
+//
+//    // Create filter from filter template and search string
+//    var ldapSvc = Components.classes["@mozilla.org/network/ldap-service;1"]
+//                            .getService(Components.interfaces.nsILDAPService);
+//    var filter = ldapSvc.createFilter(1024, filterTemplate, "", "", "", aSearchString);
+//    if (!filter)
+//      throw new Error("Filter string is empty, check if filterTemplate variable is valid in prefs.js.");
+//    args.typeSpecificArg = this._attributes;
+//    args.querySubDirectories = true;
+//    args.filter = filter;
+//
+//    // Start the actual search
+//    this._context =
+//      this._query.doQuery(this._book, args, this, this._book.maxHits, 0);
+
+//======BEGINNING OF INSERTED SECTION======
+    acDirKeys.forEach(function(aAcDirKey) {
+      this.startSearchFor(aSearchString, aAcDirKey);
+    }, this);
+//======END OF INSERTED SECTION======
+  },
+
+//======BEGINNING OF INSERTED SECTION======
+  startSearchFor: function startSearchFor(aSearchString, aAcDirKey) {
+    var uri = "moz-abldapdirectory://" + aAcDirKey;
+    var context;
+    if (uri in this._contexts) {
+      context = this._contexts[uri];
+    }
+    else {
+      context = {};
+      context.query =
+        Components.classes["@mozilla.org/addressbook/ldap-directory-query;1"]
+                  .createInstance(Components.interfaces.nsIAbDirectoryQuery);
+      context.book = MailServices.ab.getDirectory(uri)
+                                  .QueryInterface(Components.interfaces.nsIAbLDAPDirectory);
+
+      context.attributes =
+        Components.classes["@mozilla.org/addressbook/ldap-attribute-map;1"]
+                  .createInstance(Components.interfaces.nsIAbLDAPAttributeMap);
+      context.attributes.setAttributeList("DisplayName",
+        context.book.attributeMap.getAttributeList("DisplayName", {}), true);
+      context.attributes.setAttributeList("PrimaryEmail",
+        context.book.attributeMap.getAttributeList("PrimaryEmail", {}), true);
+      LDAPAbCardFormatter.requiredPropertiesFromBook(context.book).forEach(function(aProperty) {
+        var alreadyMapped = context.attributes.getAttributeList(aProperty);
+        if (alreadyMapped)
+          return;
+        context.attributes.setAttributeList(aProperty,
+          context.book.attributeMap.getAttributeList(aProperty, {}), true);
+      }, this);
+
+      this._contexts[uri] = context;
+    }
+
+    let args =
       Components.classes["@mozilla.org/addressbook/directory/query-arguments;1"]
                 .createInstance(Components.interfaces.nsIAbDirectoryQueryArguments);
 
-    var filterTemplate = this._book.getStringValue("autoComplete.filterTemplate", "");
-
-    // Use default value when preference is not set or it contains empty string    
+    let filterTemplate = context.book.getStringValue("autoComplete.filterTemplate", "");
     if (!filterTemplate)
       filterTemplate = "(|(cn=%v1*%v2-*)(mail=%v1*%v2-*)(sn=%v1*%v2-*))";
 
-    // Create filter from filter template and search string
-    var ldapSvc = Components.classes["@mozilla.org/network/ldap-service;1"]
-                            .getService(Components.interfaces.nsILDAPService);
-    var filter = ldapSvc.createFilter(1024, filterTemplate, "", "", "", aSearchString);
+    let ldapSvc = Components.classes["@mozilla.org/network/ldap-service;1"]
+                          .getService(Components.interfaces.nsILDAPService);
+    let filter = ldapSvc.createFilter(1024, filterTemplate, "", "", "", aSearchString);
     if (!filter)
       throw new Error("Filter string is empty, check if filterTemplate variable is valid in prefs.js.");
-    args.typeSpecificArg = this._attributes;
+    args.typeSpecificArg = context.attributes;
     args.querySubDirectories = true;
     args.filter = filter;
 
-    // Start the actual search
-    this._context =
-      this._query.doQuery(this._book, args, this, this._book.maxHits, 0);
+    // nsIAbDirSearchListener
+    let listener = {
+      onSearchFinished: (function onSearchFinished(aResult, aErrorMsg) {
+        context.finished = true;
+        context.result   = aResult;
+        context.errorMsg = aErrorMsg;
+
+        if (Object.keys(this._contexts).some(function(aURI) {
+              return !this._contexts[aURI].finished;
+            }, this))
+          return;
+
+        return this.onSearchFinished(aResult, aErrorMsg);
+      }).bind(this),
+      onSearchFoundCard: (function onSearchFoundCard(aCard) {
+        return this.onSearchFoundCard(aCard, context.book);
+      }).bind(this)
+    };
+
+    context.finished = false;
+    context.contextId =
+      context.query.doQuery(context.book, args, listener, context.book.maxHits, 0);
   },
+//======END OF INSERTED SECTION======
 
   stopSearch: function stopSearch() {
     if (this._listener) {
-      this._query.stopQuery(this._context);
+//      this._query.stopQuery(this._context);
+//======BEGINNING OF INSERTED SECTION======
+      Object.keys(this._contexts).forEach(function(aURI) {
+        var context = this._contexts[aURI];
+        context.query.stopQuery(context.contextId);
+      }, this);
+//======END OF INSERTED SECTION======
       this._listener = null;
     }
   },
@@ -321,11 +434,17 @@ nsAbLDAPAutoCompleteSearch.prototype = {
     this._listener = null;
   },
 
-  onSearchFoundCard: function onSearchFoundCard(aCard) {
+//  onSearchFoundCard: function onSearchFoundCard(aCard) {
+//======BEGINNING OF INSERTED SECTION======
+  onSearchFoundCard: function onSearchFoundCard(aCard, aBook) {
+//======END OF INSERTED SECTION======
     if (!this._listener)
       return;
 
-    this._addToResult(aCard);
+//    this._addToResult(aCard);
+//======BEGINNING OF INSERTED SECTION======
+    this._addToResult(aCard, aBook);
+//======END OF INSERTED SECTION======
 
     /* XXX autocomplete doesn't expect you to rearrange while searching
     if (this._result.matchCount)
