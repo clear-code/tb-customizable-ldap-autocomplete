@@ -57,7 +57,7 @@ var LDAPAbCardFormatter = {
       if (placeHolders) {
         Array.forEach(placeHolders, function(aPlaceHolder) {
           var matcher = new RegExp(aPlaceHolder.replace(/([\[\]])/g, '\\$1'));
-          var attrName = aPlaceHolder.substring(1, aPlaceHolder.length - 1);
+          var attrName = aPlaceHolder.slice(1, -1);
           var value = this._getCardPropertyFromLDAPAttrName(attrName, aCard, aBook);
           formatted = formatted.replace(matcher, value);
         }, this);
