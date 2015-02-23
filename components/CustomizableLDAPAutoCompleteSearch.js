@@ -250,6 +250,15 @@ nsAbLDAPAutoCompleteSearch.prototype = {
         this._book.attributeMap.getAttributeList("DisplayName", {}), true);
       this._attributes.setAttributeList("PrimaryEmail",
         this._book.attributeMap.getAttributeList("PrimaryEmail", {}), true);
+//======BEGINNING OF INSERTED SECTION======
+      LDAPAbCardFormatter.requiredPropertiesFromBook(this._book).forEach(function(aProperty) {
+        var alreadyMapped = this._attributes.getAttributeList(aProperty);
+        if (alreadyMapped)
+          return;
+        this._attributes.setAttributeList(aProperty,
+          this._book.attributeMap.getAttributeList(aProperty, {}), true);
+      }, this);
+//======END OF INSERTED SECTION======
     }
 
     this._result._commentColumn = this._book.dirName;

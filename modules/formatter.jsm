@@ -6,6 +6,7 @@ var EXPORTED_SYMBOLS = ["LDAPAbCardFormatter"];
 
 Components.utils.import("resource:///modules/mailServices.js");
 Components.utils.import("resource://gre/modules/Services.jsm");
+Components.utils.import("resource://customizable-ldap-autocomplete-modules/prefs.js");
 
 var parser = MailServices.headerParser;
 
@@ -30,6 +31,43 @@ var LDAPAbCardFormatter = {
                                         this._defaultCommentFormat);
   },
   _defaultCommentFormat: "[o]",
+
+  requiredPropertiesFromBook: function requiredAttributesFromBook(aBook) {
+    var nameFormat    = this.nameFormatFromBook(aBook);
+    var addressFormat = this.addressFormatFromBook(aBook);
+    var commentFormat = this.commentFormatFromBook(aBook);
+    var attrNames = this._LDAPAttrNamesFromFormat(nameFormat)
+                      .concat(this._LDAPAttrNamesFromFormat(addressFormat))
+                      .concat(this._LDAPAttrNamesFromFormat(commentFormat));
+    var properties = [];
+    attrNames.forEach(function(aAttrName) {
+      let property = this._propertyNameFromLDAPAttrName(aAttrName, aBook);
+      if (property)
+        properties.push(property);
+    }, this);
+    return properties;
+  },
+
+  _LDAPAttrNamesFromFormat: function LDAPAttrNamesFromFormat(aFormat) {
+    var placeHolders = aFormat.match(/\[[^\]]+\]|\{[^\}]+\}/g);
+    var attributes = Array.map(placeHolders, function(aPlaceHolder) {
+      return aPlaceHolder.slice(1, -1);
+    });
+    return attributes;
+  },
+
+  _propertyNameFromLDAPAttrName: function propertyNameFromLDAPAttrName(aAttrName, aBook) {
+    var base = "ldap_2.servers.default.attrmap.";
+    var keys = prefs.getChildren(base);
+    for (let i = 0, maxi = keys.length; i < maxi; i++) {
+      let key = keys[i];
+      let property = key.replace(base, "");
+      let ldapAttrNames = this._getStringValueFromBook("attrmap." + property, aBook).trim().split(/\s*,\s*/);
+      if (ldapAttrNames.indexOf(aAttrName) > -1)
+        return property;
+    }
+    return null;
+  },
 
   valueFromCard: function labelFromCard(aCard, aBook, aDefaultValue) {
     try {
