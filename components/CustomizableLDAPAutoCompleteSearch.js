@@ -238,26 +238,9 @@ nsAbLDAPAutoCompleteSearch.prototype = {
     }
 
 //======BEGINNING OF INSERTED SECTION======
-    var acDirKeys = [];
-    if (acDirURI)
-      acDirKeys.push(acDirURI);
-    var directoryServers = prefs.getPref("ldap_2.autoComplete.directoryServers");
-    if (directoryServers) {
-      if (directoryServers == "*")
-        directoryServers = prefs.getChildren("ldap_2.servers.");
-      else
-        directoryServers = directoryServers.split(/([,\|]|\s+)/);
-
-      directoryServers = directoryServers.filter(function(aServer) {
-        var isPrimaryServer     = acDirURI && aServer == acDirURI;
-        var isDefaultPreference = aServer == "ldap_2.servers.default";
-        var isNotLDAPDirectory  = (prefs.getPref(aServer + ".dirType") || 0) !== 0;
-        return !isDefaultPreference && !isPrimaryServer && !isNotLDAPDirectory;
-      });
-      acDirKeys = acDirKeys.concat(directoryServers);
-      if (acDirKeys.length > 0)
-        acDirURI = acDirKeys[0];
-    }
+    var acDirKeys = this.collectLDAPDirectoryKeys(acDirURI);
+    if (acDirKeys.length > 0)
+      acDirURI = acDirKeys[0];
 //======END OF INSERTED SECTION======
 
     if (!acDirURI) {
@@ -323,6 +306,28 @@ nsAbLDAPAutoCompleteSearch.prototype = {
   },
 
 //======BEGINNING OF INSERTED SECTION======
+  collectLDAPDirectoryKeys: function collectLDAPDirectoryKeys(aPrimaryKey) {
+    var acDirKeys = [];
+    if (aPrimaryKey)
+      acDirKeys.push(aPrimaryKey);
+    var directoryServers = prefs.getPref("ldap_2.autoComplete.directoryServers");
+    if (directoryServers) {
+      if (directoryServers == "*")
+        directoryServers = prefs.getChildren("ldap_2.servers.");
+      else
+        directoryServers = directoryServers.split(/([,\|]|\s+)/);
+
+      directoryServers = directoryServers.filter(function(aServer) {
+        var isPrimaryServer     = aPrimaryKey && aServer == acDirURI;
+        var isDefaultPreference = aServer == "ldap_2.servers.default";
+        var isNotLDAPDirectory  = (prefs.getPref(aServer + ".dirType") || 0) !== 0;
+        return !isDefaultPreference && !isPrimaryServer && !isNotLDAPDirectory;
+      });
+      acDirKeys = acDirKeys.concat(directoryServers);
+    }
+    return acDirKeys;
+  },
+
   startSearchFor: function startSearchFor(aSearchString, aAcDirKey) {
     var uri = "moz-abldapdirectory://" + aAcDirKey;
     var context;
