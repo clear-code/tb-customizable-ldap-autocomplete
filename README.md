@@ -18,6 +18,6 @@ Otherwise it will stay hidden.
 
 ## How to use multiple LDAP address books parallelly?
 
-Set `ldap_2.autoComplete.directoryServers` to `*` (means "use all LDAP servers") or a comma-separated list of LDAP server keys.
+Set `ldap_2.autoComplete.directoryServers` to `*` (means "use all LDAP servers") or a comma-separated list of LDAP server keys like `ldap_2.servers.foo,ldap_2.servers.bar,ldap_2.servers.baz`.
 
 This feature is inspired from [the Multi LDAP addon](https://addons.mozilla.org/ja/thunderbird/addon/multi-ldap/).
