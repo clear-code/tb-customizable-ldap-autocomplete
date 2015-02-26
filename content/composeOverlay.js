@@ -17,11 +17,13 @@ var AbRecipientImagePopup = {
     window.removeEventListener('load', this, false);
     window.addEventListener('unload', this, false);
     window.addEventListener('keypress', this, true);
+    window.addEventListener('popuphidden', this, true);
   },
 
   destroy: function() {
     window.removeEventListener('unload', this, false);
     window.removeEventListener('keypress', this, true);
+    window.removeEventListener('popuphidden', this, true);
   },
 
   isRecipientField: function(aElement) {
@@ -102,6 +104,11 @@ var AbRecipientImagePopup = {
 
       case 'keypress':
         this.handleUserOperation(aEvent);
+        return;
+
+      case 'popuphidden':
+        if (aEvent.target != this.popup)
+          this.hidePopup();
         return;
     }
   }
