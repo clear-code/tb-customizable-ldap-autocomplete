@@ -318,7 +318,7 @@ nsAbLDAPAutoCompleteSearch.prototype = {
         directoryServers = directoryServers.split(/([,\|]|\s+)/);
 
       directoryServers = directoryServers.filter(function(aServer) {
-        var isPrimaryServer     = aPrimaryKey && aServer == acDirURI;
+        var isPrimaryServer     = aPrimaryKey && aServer == aPrimaryKey;
         var isDefaultPreference = aServer == "ldap_2.servers.default";
         var isNotLDAPDirectory  = (prefs.getPref(aServer + ".dirType") || 0) !== 0;
         return !isDefaultPreference && !isPrimaryServer && !isNotLDAPDirectory;
