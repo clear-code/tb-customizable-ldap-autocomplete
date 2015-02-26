@@ -38,24 +38,56 @@ var AbRecipientImagePopup = {
       return;
 
     setTimeout((function() {
-      this.handleUserOperationWithDelay(field);
+      var maybeShown = this.handleUserOperationWithDelay(field);
+      if (!maybeShown)
+        this.hidePopup();
     }).bind(this), 0);
   },
   handleUserOperationWithDelay: function(aField) {
     if (!aField.popupOpen)
-      return;
+      return false;
 
     var result = AutoCompleteResultCache.get(aField.controller.searchString);
     if (!result)
-      return;
+      return false;
 
     var address = aField.controller.getValueAt(aField.popup.selectedIndex);
     var index = result.indexOfValue(address);
     if (index < 0)
-      return;
+      return false;
 
     var card = result.getCardAt(index);
-    dump('HANDLED: '+card+'\n');
+    var book = result.getBookAt(index);
+    this.showImageFor({
+      card:          card,
+      book:          book,
+      anchorElement: aField.popup
+    });
+    return true;
+  },
+
+  showImageFor: function(aParams) {
+    var card          = aParams.card;
+    var book          = aParams.book;
+    var anchorElement = aParams.anchorElement;
+
+    this.hidePopup();
+
+    if ('LDAPContactPhoto' in global) {
+      let image = new Image();
+      image.addEventListener('load', (function() {
+        this.image.src = image.src;
+        this.showPopupAt(anchorElement);
+      }).bind(this), false);
+      LDAPContactPhoto.fetchLDAPPhoto(card, book.URI, image);
+    }
+  },
+  showPopupAt: function(aAnchorElement) {
+    this.popup.openPopup(aAnchorElement, 'after_start', -1, -1, true, true);
+  },
+
+  hidePopup: function() {
+    this.popup.hidePopup();
   },
 
   handleEvent: function(aEvent) {

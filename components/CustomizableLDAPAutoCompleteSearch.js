@@ -47,6 +47,10 @@ nsAbLDAPAutoCompleteResult.prototype = {
     }
     return -1;
   },
+
+  getBookAt: function getBookAt(aIndex) {
+    return this._searchResults[aIndex].book;
+  },
 //======END OF INSERTED SECTION======
 
   // nsIAutoCompleteResult
