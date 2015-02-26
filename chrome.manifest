@@ -6,3 +6,7 @@ component {b66c5a40-964d-11e4-b4a9-0800200c9a66} components/CustomizableLDAPAuto
 contract @mozilla.org/autocomplete/search;1?name=ldap {b66c5a40-964d-11e4-b4a9-0800200c9a66}
 
 resource customizable-ldap-autocomplete-modules modules/
+
+content	customizable-ldap-autocomplete	content/
+overlay	chrome://messenger/content/messengercompose/messengercompose.xul	chrome://customizable-ldap-autocomplete/content/composeOverlay.xul
+
