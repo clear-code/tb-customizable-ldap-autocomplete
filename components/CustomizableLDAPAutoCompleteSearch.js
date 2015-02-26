@@ -14,6 +14,9 @@ XPCOMUtils.defineLazyModuleGetter(this,
 XPCOMUtils.defineLazyModuleGetter(this,
                                   "prefs",
                                   "resource://customizable-ldap-autocomplete-modules/prefs.js");
+XPCOMUtils.defineLazyModuleGetter(this,
+                                  "AutoCompleteResultCache",
+                                  "resource://customizable-ldap-autocomplete-modules/AutoCompleteResultCache.jsm");
 //======END OF INSERTED SECTION======
 
 const ACR = Components.interfaces.nsIAutoCompleteResult;
@@ -35,6 +38,16 @@ function nsAbLDAPAutoCompleteResult(aSearchString) {
 nsAbLDAPAutoCompleteResult.prototype = {
   _searchResults: null,
   _commentColumn: "",
+
+//======BEGINNING OF INSERTED SECTION======
+  indexOfValue: function indexOfValue(aValue) {
+    for (var i = 0, maxi = this._searchResults.length; i < maxi; i++) {
+      if (aValue == this.getValueAt(i))
+        return i;
+    }
+    return -1;
+  },
+//======END OF INSERTED SECTION======
 
   // nsIAutoCompleteResult
 
@@ -302,6 +315,7 @@ nsAbLDAPAutoCompleteSearch.prototype = {
     acDirKeys.forEach(function(aAcDirKey) {
       this.startSearchFor(aSearchString, aAcDirKey);
     }, this);
+    AutoCompleteResultCache.set(aSearchString, this._result);
 //======END OF INSERTED SECTION======
   },
 
@@ -410,6 +424,7 @@ nsAbLDAPAutoCompleteSearch.prototype = {
         var context = this._contexts[aURI];
         context.query.stopQuery(context.contextId);
       }, this);
+      AutoCompleteResultCache.clear();
 //======END OF INSERTED SECTION======
       this._listener = null;
     }

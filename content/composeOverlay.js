@@ -1,6 +1,9 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+(function(global) {
+
+var { AutoCompleteResultCache } = Components.utils.import("resource://customizable-ldap-autocomplete-modules/AutoCompleteResultCache.jsm", {});
 
 var AbRecipientImagePopup = {
   get popup() {
@@ -42,9 +45,17 @@ var AbRecipientImagePopup = {
     if (!aField.popupOpen)
       return;
 
-    var selectedIndex = aField.popup.selectedIndex;
-    var value = aField.controller.getValueAt(selectedIndex);
-    dump('HANDLED: '+value+'\n');
+    var result = AutoCompleteResultCache.get(aField.controller.searchString);
+    if (!result)
+      return;
+
+    var address = aField.controller.getValueAt(aField.popup.selectedIndex);
+    var index = result.indexOfValue(address);
+    if (index < 0)
+      return;
+
+    var card = result.getCardAt(index);
+    dump('HANDLED: '+card+'\n');
   },
 
   handleEvent: function(aEvent) {
@@ -65,3 +76,6 @@ var AbRecipientImagePopup = {
 };
 
 window.addEventListener('load', AbRecipientImagePopup, false);
+
+global.AbRecipientImagePopup = AbRecipientImagePopup;
+})(this);
