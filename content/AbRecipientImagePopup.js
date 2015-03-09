@@ -8,14 +8,8 @@ var AbRecipientImagePopup = {
     return document.getElementById('ab-recipient-image-popup');
   },
 
-  get imageElement() {
+  get image() {
     return document.getElementById('ab-recipient-image');
-  },
-  get imageURI() {
-    return this.imageElement.src;
-  },
-  set imageURI(aValue) {
-    return this.imageElement.src = aValue;
   },
 
   get labelElement() {
@@ -55,7 +49,7 @@ var AbRecipientImagePopup = {
         'LDAPContactPhoto' in global) {
       let image = new Image();
       image.addEventListener('load', (function() {
-        aParams.image = image.src;
+        aParams.image = image;
         this.showPopup(aParams);
       }).bind(this), false);
       LDAPContactPhoto.fetchLDAPPhoto(card, book.URI, image);
@@ -92,7 +86,16 @@ var AbRecipientImagePopup = {
         break;
     }
 
-    this.imageURI = image;
+    if (typeof image == 'string') {
+      this.image.style.maxWidth =
+        this.image.style.maxHeight = '';
+      this.image.src    = image;
+    }
+    else {
+      this.image.style.maxWidth  = image.width + 'px';
+      this.image.style.maxHeight = image.height + 'px';
+      this.image.src    = image.src;
+    }
     this.label    = label;
     this.popup.openPopup(anchorElement, position, -1, -1, false, false);
   },
