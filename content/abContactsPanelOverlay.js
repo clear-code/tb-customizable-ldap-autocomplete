@@ -31,8 +31,11 @@ var AbRecipientImagePopupSidebar = {
     if (this.delayedHandleMouseMoveTimer)
       window.clearTimeout(this.delayedHandleMouseMoveTimer);
 
-    var row = gDirTree.treeBoxObject.getRowAt(aEvent.clientX, aEvent.clientY);
-    var card = gAbView.getCardFromRow(row);
+    var row = this.tree.treeBoxObject.getRowAt(aEvent.clientX, aEvent.clientY);
+    var card = null;
+    if (row) {
+      card = gAbView.getCardFromRow(row);
+    }
 
     this.delayedHandleMouseMoveTimer = window.setTimeout((function() {
       this.delayedHandleMouseMoveTimer = null;
