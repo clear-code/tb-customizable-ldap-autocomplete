@@ -33,7 +33,7 @@ var AbRecipientImagePopupSidebar = {
 
     var row = this.tree.treeBoxObject.getRowAt(aEvent.clientX, aEvent.clientY);
     var card = null;
-    if (row) {
+    if (row > -1)
       card = gAbView.getCardFromRow(row);
     }
 
