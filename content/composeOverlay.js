@@ -75,7 +75,8 @@ var AbRecipientImagePopup = {
 
     this.hidePopup();
 
-    if ('LDAPContactPhoto' in global) {
+    if (book instanceof Compoments.interfaces.nsIAbLDAPDirectory &&
+        'LDAPContactPhoto' in global) {
       let image = new Image();
       image.addEventListener('load', (function() {
         this.image.src = image.src;
