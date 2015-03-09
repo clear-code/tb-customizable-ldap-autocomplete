@@ -65,7 +65,7 @@ var AbRecipientImagePopup = {
         position = 'end_before';
         break;
     }
-    this.popup.openPopup(anchorElement, position, -1, -1, false, true);
+    this.popup.openPopup(anchorElement, position, -1, -1, false, false);
   },
 
   hide: function() {
