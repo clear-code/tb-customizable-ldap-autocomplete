@@ -65,6 +65,7 @@ var AbRecipientImagePopup = {
         });
         return true;
       }
+    }
 
     var localResult = AutoCompleteResultCache.get('addressbook:' + searchString);
     if (localResult) {
