@@ -49,23 +49,29 @@ var AbRecipientImagePopup = {
     if (!aField.popupOpen)
       return false;
 
-    var result = AutoCompleteResultCache.get(aField.controller.searchString);
-    if (!result)
-      return false;
-
+    var rawResult = AutoCompleteResultCache.get(aField.controller.searchString);
     var address = aField.controller.getValueAt(aField.popup.selectedIndex);
-    var index = result.indexOfValue(address);
+    if (typeof rawResult.indexOfValue == 'function') {
+    let index = rawResult.indexOfValue(address);
     if (index < 0)
       return false;
 
-    var card = result.getCardAt(index);
-    var book = result.getBookAt(index);
+    let card = result.getCardAt(index);
+    let book = result.getBookAt(index);
     this.showImageFor({
       card:          card,
       book:          book,
       anchorElement: aField.popup
     });
     return true;
+    }
+    else {
+      let card = result.getCardAt(index);
+      this.showImageFor({
+        card:          card,
+        anchorElement: aField.popup
+      });
+    }
   },
 
   showImageFor: function(aParams) {
@@ -75,7 +81,8 @@ var AbRecipientImagePopup = {
 
     this.hidePopup();
 
-    if (book instanceof Compoments.interfaces.nsIAbLDAPDirectory &&
+    if (book &&
+        book instanceof Compoments.interfaces.nsIAbLDAPDirectory &&
         'LDAPContactPhoto' in global) {
       let image = new Image();
       image.addEventListener('load', (function() {
