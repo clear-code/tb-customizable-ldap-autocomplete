@@ -1,9 +1,12 @@
 # Customizable LDAP AddressBook Auto Complete
 
-Provides (restores) customizability of auto complete items for LDAP addressbook items.
-The customizability is removed by the commit http://hg.mozilla.org/releases/comm-esr31/rev/0ba38b41f77f between Thunderbird 24 and 31, by [the bug 452232 – Move LDAP autocomplete over to toolkit interfaces](https://bugzilla.mozilla.org/show_bug.cgi?id=452232).
+This addon provides three features:
 
-And this also provides preview popup for autocomplete items and addressbook sidebar items, if they have their own photo. It also works for photo stored in `thumbnailPhoto` attribute of LDAP addressbooks, when another addon [LDAP Contact Photo](https://addons.mozilla.org/thunderbird/addon/ldap-contact-photo/) is available.
+ 1. This provides (restores) customizability of auto complete items for LDAP addressbook items.
+    The customizability is removed by the commit http://hg.mozilla.org/releases/comm-esr31/rev/0ba38b41f77f between Thunderbird 24 and 31, by [the bug 452232 – Move LDAP autocomplete over to toolkit interfaces](https://bugzilla.mozilla.org/show_bug.cgi?id=452232).
+ 2. This provides parallel search with multiple LDAP addressbooks.
+    (Inspired from [the Multi LDAP addon](https://addons.mozilla.org/thunderbird/addon/multi-ldap/))
+ 3. Photo preview for autocomplete items and addressbook sidebar items.
 
 ## How to show extra information into autocomplete items?
 
@@ -22,4 +25,8 @@ Otherwise it will stay hidden.
 
 Set `extensions.customizable-ldap-autocomplete@clear-code.com.directoryServers` to `*` (means "use all LDAP servers") or a comma-separated list of LDAP server keys like `ldap_2.servers.foo,ldap_2.servers.bar,ldap_2.servers.baz`.
 
-This feature is inspired from [the Multi LDAP addon](https://addons.mozilla.org/thunderbird/addon/multi-ldap/).
+## How to show photo preview?
+
+If the addressbook card for the selected autocomplete item (or the addressbook sidebar item) has its owne photo, it is shown as a popup near the item automatically.
+
+For LDAP addressbooks, photo stored in `thumbnailPhoto` attribute is used when another addon [LDAP Contact Photo](https://addons.mozilla.org/thunderbird/addon/ldap-contact-photo/) is installed together.
