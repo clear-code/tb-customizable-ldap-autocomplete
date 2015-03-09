@@ -12,25 +12,44 @@ var AbRecipientImagePopupSidebar = {
     window.removeEventListener('load', this, false);
     window.addEventListener('unload', this, false);
     this.tree.addEventListener('select', this, true);
+    this.tree.addEventListener('mousemove', this, true);
   },
 
   destroy: function() {
     window.removeEventListener('unload', this, false);
     this.tree.removeEventListener('select', this, true);
+    this.tree.removeEventListener('mousemove', this, true);
   },
 
-  handleSelectionChange: function(aEvent) {
+  handleSelectionChange: function() {
     var cards = GetSelectedAbCards();
-    if (cards.length == 0)
-      return;
+    if (cards.length > 0)
+      this.showForCard(cards[0]);
+  },
 
+  handleMouseMove: function(aEvent) {
+    if (this.delayedHandleMouseMoveTimer)
+      window.clearTimeout(this.delayedHandleMouseMoveTimer);
+
+    var row = gDirTree.treeBoxObject.getRowAt(aEvent.clientX, aEvent.clientY);
+    var card = gAbView.getCardFromRow(row);
+
+    this.delayedHandleMouseMoveTimer = window.setTimeout((function() {
+      this.delayedHandleMouseMoveTimer = null;
+      var maybeShown = card && this.showForCard(card);
+      if (!maybeShown)
+        AbRecipientImagePopup.hide();
+    }).bind(this), 100);
+  },
+
+  showForCard: function(aCard) {
     AbRecipientImagePopup.hide();
 
     var directoryURI = GetSelectedDirectory();
     var directory =  GetDirectoryFromURI(directoryURI);
 
     AbRecipientImagePopup.show({
-      card:          cards[0],
+      card:          aCard,
       book:          directory,
       // Popup always eats click events on the anchor element, so
       // we have to specify other element as the anchor.
@@ -52,7 +71,11 @@ var AbRecipientImagePopupSidebar = {
         return;
 
       case 'select':
-        this.handleSelectionChange(aEvent);
+        this.handleSelectionChange();
+        return;
+
+      case 'mousemove':
+        this.handleMouseMove(aEvent);
         return;
     }
   }
