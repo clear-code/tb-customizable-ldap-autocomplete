@@ -7,8 +7,25 @@ var AbRecipientImagePopup = {
   get popup() {
     return document.getElementById('ab-recipient-image-popup');
   },
-  get image() {
+
+  get imageElement() {
     return document.getElementById('ab-recipient-image');
+  },
+  get imageURI() {
+    return this.imageElement.src;
+  },
+  set imageURI(aValue) {
+    return this.imageElement.src = aValue;
+  },
+
+  get labelElement() {
+    return document.getElementById('ab-recipient-label');
+  },
+  get label() {
+    return this.labelElement.value;
+  },
+  set label(aValue) {
+    return this.labelElement.value = aValue;
   },
 
   init: function() {
@@ -22,6 +39,13 @@ var AbRecipientImagePopup = {
     window.removeEventListener('popuphidden', this, true);
   },
 
+  labelForCard: function(aCard) {
+    if (aCard.displayName)
+      return aCard.displayName + ' <' + aCard.primaryEmail + '>';
+
+    return aCard.primaryEmail;
+  },
+
   show: function(aParams) {
     var card = aParams.card;
     var book = aParams.book;
@@ -31,7 +55,7 @@ var AbRecipientImagePopup = {
         'LDAPContactPhoto' in global) {
       let image = new Image();
       image.addEventListener('load', (function() {
-        this.image.src = image.src;
+        aParams.image = image.src;
         this.showPopup(aParams);
       }).bind(this), false);
       LDAPContactPhoto.fetchLDAPPhoto(card, book.URI, image);
@@ -43,7 +67,7 @@ var AbRecipientImagePopup = {
       case 'web':
         let uri = card.getProperty('PhotoURI', null);
         if (uri) {
-          this.image.src = uri;
+          aParams.image = uri;
           this.showPopup(aParams);
         }
         return;
@@ -55,6 +79,8 @@ var AbRecipientImagePopup = {
   showPopup: function(aParams) {
     var anchorElement = aParams.anchorElement;
     var position      = aParams.position;
+    var image         = aParams.image;
+    var label         = aParams.label || this.labelForCard(aParams.card);
 
     switch (position) {
       case 'below':
@@ -65,6 +91,9 @@ var AbRecipientImagePopup = {
         position = 'end_before';
         break;
     }
+
+    this.imageURI = image;
+    this.label    = label;
     this.popup.openPopup(anchorElement, position, -1, -1, false, false);
   },
 

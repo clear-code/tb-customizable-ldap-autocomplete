@@ -22,8 +22,12 @@
                  PopupBoxObject.ROLLUP_NO_CONSUME
                );
              }
-           ">
+           "
+           orient="vertical">
       <image id="ab-recipient-image"/>
+      <label id="ab-recipient-label"
+             align="stretch"
+             crop="end"/>
     </panel>
   </popupset>
   <script type="application/x-javascript" src="./AbRecipientImagePopup.js"/>

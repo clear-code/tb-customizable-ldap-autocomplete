@@ -60,6 +60,7 @@ var AbRecipientImagePopupAutocomplete = {
         let card = ldapResult.getCardAt(ldapIndex);
         let book = ldapResult.getBookAt(ldapIndex);
         AbRecipientImagePopup.show({
+          label:         address,
           card:          card,
           book:          book,
           anchorElement: aField.popup,
@@ -76,6 +77,7 @@ var AbRecipientImagePopupAutocomplete = {
         localResult = localResult.QueryInterface(Components.interfaces.nsIAbAutoCompleteResult);
         let card = localResult.getCardAt(localIndex);
         AbRecipientImagePopup.show({
+          label:         address,
           card:          card,
           anchorElement: aField.popup,
           position:      'below'
