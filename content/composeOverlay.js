@@ -3,7 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 (function(global) {
 
-var { AutoCompleteResultCache } = Components.utils.import("resource://customizable-ldap-autocomplete-modules/AutoCompleteResultCache.jsm", {});
+var { AutoCompleteResultCache } = Components.utils.import('resource://customizable-ldap-autocomplete-modules/AutoCompleteResultCache.jsm', {});
 
 var AbRecipientImagePopup = {
   get popup() {
