@@ -56,13 +56,13 @@ var AbRecipientImagePopup = {
     if (ldapResult) {
       let ldapIndex = this.getIndexOfValueFromAutoCompleteResult(address, ldapResult);
       if (ldapIndex > -1) {
-    let card = result.getCardAt(index);
-    let book = result.getBookAt(index);
-    this.showImageFor({
-      card:          card,
-      book:          book,
-      anchorElement: aField.popup
-    });
+        let card = result.getCardAt(index);
+        let book = result.getBookAt(index);
+        this.showImageFor({
+          card:          card,
+          book:          book,
+          anchorElement: aField.popup
+        });
         return true;
       }
 
