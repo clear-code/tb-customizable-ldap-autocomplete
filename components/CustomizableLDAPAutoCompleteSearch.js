@@ -40,14 +40,6 @@ nsAbLDAPAutoCompleteResult.prototype = {
   _commentColumn: "",
 
 //======BEGINNING OF INSERTED SECTION======
-  indexOfValue: function indexOfValue(aValue) {
-    for (var i = 0, maxi = this._searchResults.length; i < maxi; i++) {
-      if (aValue == this.getValueAt(i))
-        return i;
-    }
-    return -1;
-  },
-
   getBookAt: function getBookAt(aIndex) {
     return this._searchResults[aIndex].book;
   },
