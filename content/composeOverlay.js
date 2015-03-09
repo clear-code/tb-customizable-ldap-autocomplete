@@ -26,6 +26,16 @@ var AbRecipientImagePopup = {
     window.removeEventListener('popuphidden', this, true);
   },
 
+  findOwnerRecipientField: function(aTarget) {
+    var node = aTarget;
+    do {
+      if (this.isRecipientField(node))
+        return node;
+      node = node.parentNode;
+    } while (node);
+    return null;
+  },
+
   isRecipientField: function(aElement) {
     return (
       aElement.localName == 'textbox' &&
@@ -35,8 +45,8 @@ var AbRecipientImagePopup = {
   },
 
   handleUserOperation: function(aEvent) {
-    var field = aEvent.target;
-    if (!this.isRecipientField(field))
+    var field = this.findOwnerRecipientField(aEvent.target);
+    if (!field)
       return;
 
     setTimeout((function() {
