@@ -49,6 +49,8 @@ var AbRecipientImagePopup = {
     if (!aField.popupOpen)
       return false;
 
+    this.hidePopup();
+
     var searchString = aField.controller.searchString;
     var address = aField.controller.getValueAt(aField.popup.selectedIndex);
 
@@ -96,8 +98,6 @@ var AbRecipientImagePopup = {
     var card          = aParams.card;
     var book          = aParams.book;
     var anchorElement = aParams.anchorElement;
-
-    this.hidePopup();
 
     if (book &&
         book instanceof Compoments.interfaces.nsIAbLDAPDirectory &&
