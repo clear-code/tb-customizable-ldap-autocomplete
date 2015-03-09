@@ -25,7 +25,6 @@ var AbRecipientImagePopup = {
   show: function(aParams) {
     var card          = aParams.card;
     var book          = aParams.book;
-    var anchorElement = aParams.anchorElement;
 
     if (book &&
         book instanceof Components.interfaces.nsIAbLDAPDirectory &&
@@ -33,7 +32,7 @@ var AbRecipientImagePopup = {
       let image = new Image();
       image.addEventListener('load', (function() {
         this.image.src = image.src;
-        this.showPopupAt(anchorElement);
+        this.showPopup(aParams);
       }).bind(this), false);
       LDAPContactPhoto.fetchLDAPPhoto(card, book.URI, image);
       return;
@@ -45,7 +44,7 @@ var AbRecipientImagePopup = {
         let uri = card.getProperty('PhotoURI', null);
         if (uri) {
           this.image.src = uri;
-          this.showPopupAt(anchorElement);
+          this.showPopup(aParams);
         }
         return;
 
@@ -53,8 +52,20 @@ var AbRecipientImagePopup = {
         break;
     }
   },
-  showPopupAt: function(aAnchorElement) {
-    this.popup.openPopup(aAnchorElement, 'after_start', -1, -1, false, true);
+  showPopup: function(aParams) {
+    var anchorElement = aParams.anchorElement;
+    var position      = aParams.position;
+
+    switch (position) {
+      case 'below':
+        position = 'after_start';
+        break;
+
+      case 'side':
+        position = 'end_before';
+        break;
+    }
+    this.popup.openPopup(anchorElement, position, -1, -1, false, true);
   },
 
   hide: function() {

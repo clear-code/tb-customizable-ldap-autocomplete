@@ -64,7 +64,8 @@ var AbRecipientImagePopupAutocomplete = {
         AbRecipientImagePopup.show({
           card:          card,
           book:          book,
-          anchorElement: aField.popup
+          anchorElement: aField.popup,
+          position:      'below'
         });
         return true;
       }
