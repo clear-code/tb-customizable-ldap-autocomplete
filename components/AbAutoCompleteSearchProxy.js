@@ -39,13 +39,13 @@ AbAutoCompleteSearchProxy.prototype = {
   onSearchResult: function onSearchResult(aSearch, aResult) {
     if (this._searchString)
       AutoCompleteResultCache.set('addressbook:' + this._searchString, aResult);
-    return this._listener.onSearchResult(aSearch, aResult);
+    return this._listener.onSearchResult(this, aResult);
   },
 
   onUpdateSearchResult: function onUpdateSearchResult(aSearch, aResult) {
     if (this._searchString)
       AutoCompleteResultCache.set('addressbook:' + this._searchString, aResult);
-    return this._listener.onUpdateSearchResult(aSearch, aResult);
+    return this._listener.onUpdateSearchResult(this, aResult);
   },
 
   // nsISupports
