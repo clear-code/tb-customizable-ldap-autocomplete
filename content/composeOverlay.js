@@ -16,13 +16,13 @@ var AbRecipientImagePopup = {
   init: function() {
     window.removeEventListener('load', this, false);
     window.addEventListener('unload', this, false);
-    window.addEventListener('keypress', this, true);
+    window.addEventListener('select', this, true);
     window.addEventListener('popuphidden', this, true);
   },
 
   destroy: function() {
     window.removeEventListener('unload', this, false);
-    window.removeEventListener('keypress', this, true);
+    window.removeEventListener('select', this, true);
     window.removeEventListener('popuphidden', this, true);
   },
 
@@ -44,18 +44,18 @@ var AbRecipientImagePopup = {
     );
   },
 
-  handleUserOperation: function(aEvent) {
+  handleSelectionChange: function(aEvent) {
     var field = this.findOwnerRecipientField(aEvent.target);
     if (!field)
       return;
 
     setTimeout((function() {
-      var maybeShown = this.handleUserOperationWithDelay(field);
+      var maybeShown = this.handleSelectionChangeWithDelay(field);
       if (!maybeShown)
         this.hidePopup();
     }).bind(this), 0);
   },
-  handleUserOperationWithDelay: function(aField) {
+  handleSelectionChangeWithDelay: function(aField) {
     if (!aField.popupOpen)
       return false;
 
@@ -153,8 +153,8 @@ var AbRecipientImagePopup = {
         this.destroy();
         return;
 
-      case 'keypress':
-        this.handleUserOperation(aEvent);
+      case 'select':
+        this.handleSelectionChange(aEvent);
         return;
 
       case 'popuphidden':
