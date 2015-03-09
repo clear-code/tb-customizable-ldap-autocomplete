@@ -6,10 +6,11 @@
   <script type="application/x-javascript" src="./composeOverlay.js"/>
   <vbox id="addresses-box">
     <popupset id="ab-recipient-image-popupset">
-      <tooltip id="ab-recipient-image-popup">
+      <panel id="ab-recipient-image-popup"
+             noautofocus="true">
         <image id="ab-recipient-image"
                style="max-width: 256px; max-height: 256px;"/>
-      </tooltip>
+      </panel>
     </popupset>
   </vbox>
 

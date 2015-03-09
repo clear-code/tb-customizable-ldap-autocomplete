@@ -126,7 +126,7 @@ var AbRecipientImagePopup = {
     }
   },
   showPopupAt: function(aAnchorElement) {
-    this.popup.openPopup(aAnchorElement, 'after_start', -1, -1, true, true);
+    this.popup.openPopup(aAnchorElement, 'after_start', -1, -1, false, true);
   },
 
   hidePopup: function() {
