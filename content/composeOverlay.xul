@@ -7,7 +7,8 @@
   <vbox id="addresses-box">
     <popupset id="ab-recipient-image-popupset">
       <tooltip id="ab-recipient-image-popup">
-        <image id="ab-recipient-image"/>
+        <image id="ab-recipient-image"
+               style="max-width: 256px; max-height: 256px;"/>
       </tooltip>
     </popupset>
   </vbox>
