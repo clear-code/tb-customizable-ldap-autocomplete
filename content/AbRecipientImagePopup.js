@@ -12,14 +12,24 @@ var AbRecipientImagePopup = {
     return document.getElementById('ab-recipient-image');
   },
 
-  get labelElement() {
-    return document.getElementById('ab-recipient-label');
+  get nameLabelElement() {
+    return document.getElementById('ab-recipient-label-name');
   },
-  get label() {
-    return this.labelElement.value;
+  get nameLabel() {
+    return this.nameLabelElement.value;
   },
-  set label(aValue) {
-    return this.labelElement.value = aValue;
+  set nameLabel(aValue) {
+    return this.nameLabelElement.value = aValue;
+  },
+
+  get addressLabelElement() {
+    return document.getElementById('ab-recipient-label-address');
+  },
+  get addressLabel() {
+    return this.addressLabelElement.value;
+  },
+  set addressLabel(aValue) {
+    return this.addressLabelElement.value = aValue;
   },
 
   init: function() {
@@ -74,7 +84,7 @@ var AbRecipientImagePopup = {
     var anchorElement = aParams.anchorElement;
     var position      = aParams.position;
     var image         = aParams.image;
-    var label         = aParams.label || this.labelForCard(aParams.card);
+    var card          = aParams.card;
 
     switch (position) {
       case 'below':
@@ -96,7 +106,8 @@ var AbRecipientImagePopup = {
       this.image.style.maxHeight = image.height + 'px';
       this.image.src    = image.src;
     }
-    this.label    = label;
+    this.nameLabel    = card.displayName  || '';
+    this.addressLabel = card.primaryEmail || '';
     this.popup.openPopup(anchorElement, position, -1, -1, false, false);
   },
 

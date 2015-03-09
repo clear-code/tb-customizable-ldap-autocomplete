@@ -6,3 +6,7 @@
   max-width: 256px;
   max-height: 256px;
 }
+
+#ab-recipient-image-popup label[value=""] {
+  visibility: collapse;
+}

@@ -25,9 +25,14 @@
            "
            orient="vertical">
       <image id="ab-recipient-image"/>
-      <label id="ab-recipient-label"
+      <label id="ab-recipient-label-name"
              align="stretch"
-             crop="end"/>
+             crop="end"
+             value=""/>
+      <label id="ab-recipient-label-address"
+             align="stretch"
+             crop="end"
+             value=""/>
     </panel>
   </popupset>
   <script type="application/x-javascript" src="./AbRecipientImagePopup.js"/>
