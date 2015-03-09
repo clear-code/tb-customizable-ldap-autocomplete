@@ -49,7 +49,9 @@ var AbRecipientImagePopup = {
     if (!aField.popupOpen)
       return false;
 
-    var rawResult = AutoCompleteResultCache.get(aField.controller.searchString);
+    var searchString = aField.controller.searchString;
+    var cacheKey = 'ldap:' + searchString;
+    var rawResult = AutoCompleteResultCache.get(searchString);
     var address = aField.controller.getValueAt(aField.popup.selectedIndex);
     if (typeof rawResult.indexOfValue == 'function') {
     let index = rawResult.indexOfValue(address);

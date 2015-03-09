@@ -11,6 +11,9 @@ var AutoCompleteResultCache = {
   get: function(aKey) {
     return this._caches[aKey] || null;
   },
+  delete: function(aKey) {
+    delete this._caches[aKey];
+  },
   clear: function() {
     this._caches = {};
   }

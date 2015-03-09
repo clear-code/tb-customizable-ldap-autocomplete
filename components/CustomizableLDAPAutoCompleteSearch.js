@@ -319,7 +319,8 @@ nsAbLDAPAutoCompleteSearch.prototype = {
     acDirKeys.forEach(function(aAcDirKey) {
       this.startSearchFor(aSearchString, aAcDirKey);
     }, this);
-    AutoCompleteResultCache.set(aSearchString, this._result);
+    this._lastSearchString = aSearchString;
+    AutoCompleteResultCache.set('ldap:' + this._lastSearchString, this._result);
 //======END OF INSERTED SECTION======
   },
 
@@ -428,7 +429,9 @@ nsAbLDAPAutoCompleteSearch.prototype = {
         var context = this._contexts[aURI];
         context.query.stopQuery(context.contextId);
       }, this);
-      AutoCompleteResultCache.clear();
+      if (this._lastSearchString)
+        AutoCompleteResultCache.delete('ldap:' + this._lastSearchString);
+      this._lastSearchString = null;
 //======END OF INSERTED SECTION======
       this._listener = null;
     }
