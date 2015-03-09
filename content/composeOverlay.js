@@ -79,7 +79,8 @@ var AbRecipientImagePopupAutocomplete = {
         let card = localResult.getCardAt(localIndex);
         AbRecipientImagePopup.show({
           card:          card,
-          anchorElement: aField.popup
+          anchorElement: aField.popup,
+          position:      'below'
         });
         return true;
       }
