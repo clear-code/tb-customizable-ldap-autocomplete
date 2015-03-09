@@ -100,7 +100,7 @@ var AbRecipientImagePopup = {
     var anchorElement = aParams.anchorElement;
 
     if (book &&
-        book instanceof Compoments.interfaces.nsIAbLDAPDirectory &&
+        book instanceof Components.interfaces.nsIAbLDAPDirectory &&
         'LDAPContactPhoto' in global) {
       let image = new Image();
       image.addEventListener('load', (function() {
