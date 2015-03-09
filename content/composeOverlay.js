@@ -56,8 +56,8 @@ var AbRecipientImagePopup = {
     if (ldapResult) {
       let ldapIndex = this.getIndexOfValueFromAutoCompleteResult(address, ldapResult);
       if (ldapIndex > -1) {
-        let card = result.getCardAt(index);
-        let book = result.getBookAt(index);
+        let card = result.getCardAt(ldapIndex);
+        let book = result.getBookAt(ldapIndex);
         this.showImageFor({
           card:          card,
           book:          book,
@@ -72,7 +72,7 @@ var AbRecipientImagePopup = {
       let localIndex = this.getIndexOfValueFromAutoCompleteResult(address, localResult);
       if (localIndex > -1) {
         localResult = localResult.QueryInterface(Components.interfaces.nsIAbAutoCompleteResult);
-        let card = localResult.getCardAt(index);
+        let card = localResult.getCardAt(localIndex);
         this.showImageFor({
           card:          card,
           anchorElement: aField.popup
