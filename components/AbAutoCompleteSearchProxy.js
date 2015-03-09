@@ -10,8 +10,8 @@ XPCOMUtils.defineLazyModuleGetter(this,
                                   "resource://customizable-ldap-autocomplete-modules/AutoCompleteResultCache.jsm");
 
 function AbAutoCompleteSearchProxy() {
-  this._internal = Components.classesByID["2f946df9-114c-41fe-8899-81f10daf4f0c"]
-                     .QueryInterface(Components.interfaces.nsIAutoCompleteSearch);
+  this._internal = Components.classesByID["{2f946df9-114c-41fe-8899-81f10daf4f0c}"]
+                     .getService(Components.interfaces.nsIAutoCompleteSearch);
 }
 
 AbAutoCompleteSearchProxy.prototype = {
