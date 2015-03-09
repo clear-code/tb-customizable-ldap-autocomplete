@@ -321,6 +321,10 @@ nsAbLDAPAutoCompleteSearch.prototype = {
     var acDirKeys = [];
     if (aPrimaryKey)
       acDirKeys.push(aPrimaryKey);
+
+    if (!prefs.getPref("ldap_2.autoComplete.useDirectory"))
+      return acDirKeys;
+
     var directoryServers = prefs.getPref("extensions.customizable-ldap-autocomplete@clear-code.com.directoryServers");
     if (directoryServers) {
       if (directoryServers == "*")
