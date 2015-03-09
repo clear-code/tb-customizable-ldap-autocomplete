@@ -13,12 +13,16 @@ var AbRecipientImagePopupSidebar = {
     window.addEventListener('unload', this, false);
     this.tree.addEventListener('select', this, true);
     this.tree.addEventListener('mousemove', this, true);
+    this.tree.addEventListener('mouseover', this, true);
+    this.tree.addEventListener('mouseout', this, true);
   },
 
   destroy: function() {
     window.removeEventListener('unload', this, false);
     this.tree.removeEventListener('select', this, true);
     this.tree.removeEventListener('mousemove', this, true);
+    this.tree.removeEventListener('mouseover', this, true);
+    this.tree.removeEventListener('mouseout', this, true);
   },
 
   handleSelectionChange: function() {
@@ -38,6 +42,9 @@ var AbRecipientImagePopupSidebar = {
 
     this.delayedHandleMouseMoveTimer = window.setTimeout((function() {
       this.delayedHandleMouseMoveTimer = null;
+      if (!this._hoverOnTree)
+        return;
+
       if (card)
         this.showForCard(card);
     }).bind(this), 100);
@@ -77,6 +84,27 @@ var AbRecipientImagePopupSidebar = {
 
       case 'mousemove':
         this.handleMouseMove(aEvent);
+        return;
+
+      case 'mouseover':
+        window.setTimeout((function() {
+          this._hoverOnTree = true;
+        }).bind(this), 0);
+        return;
+
+      case 'mouseout':
+        this._hoverOnTree = false;
+        window.setTimeout((function() {
+          window.setTimeout((function() {
+            if (this._hoverOnTree)
+              return;
+            AbRecipientImagePopup.hide();
+            if (this.delayedHandleMouseMoveTimer) {
+              window.clearTimeout(this.delayedHandleMouseMoveTimer);
+              this.delayedHandleMouseMoveTimer = null;
+            }
+          }).bind(this), 0);
+        }).bind(this), 0);
         return;
     }
   }
