@@ -23,15 +23,15 @@ AbAutoCompleteSearchProxy.prototype = {
                                     aPreviousResult, aListener) {
     this._searchString = aSearchString;
     this._listener = aListener;
-    this._internal.startSearch(aSearchString, aParam, aPreviousResult, this);
+    return this._internal.startSearch(aSearchString, aParam, aPreviousResult, this);
   },
 
   stopSearch: function stopSearch() {
     if (this._searchString)
       AutoCompleteResultCache.delete(this._searchString);
-    this._internal.stopSearch();
     this._listener = null;
     this._searchString = null;
+    return this._internal.stopSearch();
   },
 
   // nsIAutoCompleteObserver
