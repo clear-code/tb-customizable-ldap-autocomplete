@@ -50,14 +50,12 @@ var AbRecipientImagePopup = {
       return false;
 
     var searchString = aField.controller.searchString;
-    var cacheKey = 'ldap:' + searchString;
-    var rawResult = AutoCompleteResultCache.get(cacheKey);
     var address = aField.controller.getValueAt(aField.popup.selectedIndex);
-    if (typeof rawResult.indexOfValue == 'function') {
-    let index = rawResult.indexOfValue(address);
-    if (index < 0)
-      return false;
 
+    var ldapResult = AutoCompleteResultCache.get('ldap:' + searchString);
+    if (ldapResult) {
+      let ldapIndex = this.getIndexOfValueFromAutoCompleteResult(address, ldapResult);
+      if (ldapIndex > -1) {
     let card = result.getCardAt(index);
     let book = result.getBookAt(index);
     this.showImageFor({
@@ -65,15 +63,32 @@ var AbRecipientImagePopup = {
       book:          book,
       anchorElement: aField.popup
     });
-    return true;
+        return true;
+      }
+
+    var localResult = AutoCompleteResultCache.get('addressbook:' + searchString);
+    if (localResult) {
+      let localIndex = this.getIndexOfValueFromAutoCompleteResult(address, localResult);
+      if (localIndex > -1) {
+        localResult = localResult.QueryInterface(Components.interfaces.nsIAbAutoCompleteResult);
+        let card = localResult.getCardAt(index);
+        this.showImageFor({
+          card:          card,
+          anchorElement: aField.popup
+        });
+        return true;
+      }
     }
-    else {
-      let card = result.getCardAt(index);
-      this.showImageFor({
-        card:          card,
-        anchorElement: aField.popup
-      });
+
+    return false;
+  },
+
+  getIndexOfValueFromAutoCompleteResult: function(aValue, aResult) {
+    for (let i = 0, maxi = aResult.matchCount; i < maxi; i++) {
+      if (aResult.getValueAt(i) == aValue)
+        return i;
     }
+    return -1;
   },
 
   showImageFor: function(aParams) {
