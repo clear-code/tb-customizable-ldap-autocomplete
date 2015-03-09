@@ -11,9 +11,11 @@
            ignorekeys="true"
            consumeoutsideclicks="never"
            onpopupshown="
-             // On Linux, rollup event is consumed even if consumeoutsideclicks="never"
-             // so we have to set the flag manually.
-             // Note, setConsumeRollupEvent() must be called after the popup is completely shown.
+             /** 
+              * On Linux, rollup event is consumed even if consumeoutsideclicks='never'
+              * so we have to set the flag manually.
+              * Note, setConsumeRollupEvent() must be called after the popup is completely shown.
+              */
              if ('setConsumeRollupEvent' in this.popupBoxObject) {
                this.popupBoxObject.setConsumeRollupEvent(
                  this.popupBoxObject.ROLLUP_NO_CONSUME ||
