@@ -21,9 +21,9 @@ AbAutoCompleteSearchProxy.prototype = {
 
   startSearch: function startSearch(aSearchString, aParam,
                                     aPreviousResult, aListener) {
+    this._searchString = aSearchString;
     this._listener = aListener;
     this._internal.startSearch(aSearchString, aParam, aPreviousResult, this);
-    this._searchString = aSearchString;
   },
 
   stopSearch: function stopSearch() {
