@@ -83,6 +83,21 @@ var AbRecipientImagePopup = {
         this.showPopupAt(anchorElement);
       }).bind(this), false);
       LDAPContactPhoto.fetchLDAPPhoto(card, book.URI, image);
+      return;
+    }
+
+    switch (card.getProperty('PhotoType', null)) {
+      case 'file':
+      case 'web':
+        let uri = card.getProperty('PhotoURI', null);
+        if (uri) {
+          this.image.src = uri;
+          this.showPopupAt(anchorElement);
+        }
+        return;
+
+      default:
+        break;
     }
   },
   showPopupAt: function(aAnchorElement) {
