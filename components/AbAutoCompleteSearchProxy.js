@@ -9,10 +9,6 @@ XPCOMUtils.defineLazyModuleGetter(this,
                                   "AutoCompleteResultCache",
                                   "resource://customizable-ldap-autocomplete-modules/AutoCompleteResultCache.jsm");
 
-const ACR = Components.interfaces.nsIAutoCompleteResult;
-const nsIAbAutoCompleteResult = Components.interfaces.nsIAbAutoCompleteResult;
-const nsIAbDirectoryQueryResultListener = Components.interfaces.nsIAbDirectoryQueryResultListener;
-
 function AbAutoCompleteSearchProxy() {
   this._internal = Components.classesByID["2f946df9-114c-41fe-8899-81f10daf4f0c"]
                      .QueryInterface(Components.interfaces.nsIAutoCompleteSearch);
