@@ -35,13 +35,11 @@ var AbRecipientImagePopupSidebar = {
     var card = null;
     if (row > -1)
       card = gAbView.getCardFromRow(row);
-    }
 
     this.delayedHandleMouseMoveTimer = window.setTimeout((function() {
       this.delayedHandleMouseMoveTimer = null;
-      var maybeShown = card && this.showForCard(card);
-      if (!maybeShown)
-        AbRecipientImagePopup.hide();
+      if (card)
+        this.showForCard(card);
     }).bind(this), 100);
   },
 

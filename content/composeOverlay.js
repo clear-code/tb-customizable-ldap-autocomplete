@@ -41,14 +41,12 @@ var AbRecipientImagePopupAutocomplete = {
       return;
 
     setTimeout((function() {
-      var maybeShown = this.handleSelectionChangeWithDelay(field);
-      if (!maybeShown)
-        AbRecipientImagePopup.hide();
+      this.handleSelectionChangeWithDelay(field);
     }).bind(this), 0);
   },
   handleSelectionChangeWithDelay: function(aField) {
     if (!aField.popupOpen)
-      return false;
+      return;
 
     AbRecipientImagePopup.hide();
 
@@ -67,7 +65,7 @@ var AbRecipientImagePopupAutocomplete = {
           anchorElement: aField.popup,
           position:      'below'
         });
-        return true;
+        return;
       }
     }
 
@@ -82,11 +80,9 @@ var AbRecipientImagePopupAutocomplete = {
           anchorElement: aField.popup,
           position:      'below'
         });
-        return true;
+        return;
       }
     }
-
-    return false;
   },
 
   getIndexOfValueFromAutoCompleteResult: function(aValue, aResult) {
