@@ -22,4 +22,4 @@ Otherwise it will stay hidden.
 
 Set `ldap_2.autoComplete.directoryServers` to `*` (means "use all LDAP servers") or a comma-separated list of LDAP server keys like `ldap_2.servers.foo,ldap_2.servers.bar,ldap_2.servers.baz`.
 
-This feature is inspired from [the Multi LDAP addon](https://addons.mozilla.org/ja/thunderbird/addon/multi-ldap/).
+This feature is inspired from [the Multi LDAP addon](https://addons.mozilla.org/thunderbird/addon/multi-ldap/).
