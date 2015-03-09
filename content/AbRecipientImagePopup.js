@@ -23,8 +23,8 @@ var AbRecipientImagePopup = {
   },
 
   show: function(aParams) {
-    var card          = aParams.card;
-    var book          = aParams.book;
+    var card = aParams.card;
+    var book = aParams.book;
 
     if (book &&
         book instanceof Components.interfaces.nsIAbLDAPDirectory &&
