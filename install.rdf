@@ -5,7 +5,7 @@
   <RDF:Description RDF:about="urn:mozilla:install-manifest"
                    em:id="customizable-ldap-autocomplete@clear-code.com"
                    em:name="Customizable LDAP AddressBook Auto Complete"
-                   em:version="1.0"
+                   em:version="1.0+"
                    em:description="Provides (restores) customizability of auto complete items for LDAP addressbook items."
                    em:creator="ClearCode Inc."
                    em:homepageURL="http://www.clear-code.com/"
