@@ -3,8 +3,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 (function(global) {
 
-var { AutoCompleteResultCache } = Components.utils.import('resource://customizable-ldap-autocomplete-modules/AutoCompleteResultCache.jsm', {});
-
 var AbRecipientImagePopup = {
   get popup() {
     return document.getElementById('ab-recipient-image-popup');
@@ -16,95 +14,15 @@ var AbRecipientImagePopup = {
   init: function() {
     window.removeEventListener('load', this, false);
     window.addEventListener('unload', this, false);
-    window.addEventListener('select', this, true);
     window.addEventListener('popuphidden', this, true);
   },
 
   destroy: function() {
     window.removeEventListener('unload', this, false);
-    window.removeEventListener('select', this, true);
     window.removeEventListener('popuphidden', this, true);
   },
 
-  findOwnerRecipientField: function(aTarget) {
-    var node = aTarget;
-    do {
-      if (this.isRecipientField(node))
-        return node;
-      node = node.parentNode;
-    } while (node);
-    return null;
-  },
-
-  isRecipientField: function(aElement) {
-    return (
-      aElement.localName == 'textbox' &&
-      aElement.getAttribute('type') == 'autocomplete' &&
-      aElement.classList.contains('textbox-addressingWidget')
-    );
-  },
-
-  handleSelectionChange: function(aEvent) {
-    var field = this.findOwnerRecipientField(aEvent.target);
-    if (!field)
-      return;
-
-    setTimeout((function() {
-      var maybeShown = this.handleSelectionChangeWithDelay(field);
-      if (!maybeShown)
-        this.hidePopup();
-    }).bind(this), 0);
-  },
-  handleSelectionChangeWithDelay: function(aField) {
-    if (!aField.popupOpen)
-      return false;
-
-    this.hidePopup();
-
-    var searchString = aField.controller.searchString;
-    var address = aField.controller.getValueAt(aField.popup.selectedIndex);
-
-    var ldapResult = AutoCompleteResultCache.get('ldap:' + searchString);
-    if (ldapResult) {
-      let ldapIndex = this.getIndexOfValueFromAutoCompleteResult(address, ldapResult);
-      if (ldapIndex > -1) {
-        let card = ldapResult.getCardAt(ldapIndex);
-        let book = ldapResult.getBookAt(ldapIndex);
-        this.showImageFor({
-          card:          card,
-          book:          book,
-          anchorElement: aField.popup
-        });
-        return true;
-      }
-    }
-
-    var localResult = AutoCompleteResultCache.get('addressbook:' + searchString);
-    if (localResult) {
-      let localIndex = this.getIndexOfValueFromAutoCompleteResult(address, localResult);
-      if (localIndex > -1) {
-        localResult = localResult.QueryInterface(Components.interfaces.nsIAbAutoCompleteResult);
-        let card = localResult.getCardAt(localIndex);
-        this.showImageFor({
-          card:          card,
-          anchorElement: aField.popup
-        });
-        return true;
-      }
-    }
-
-    return false;
-  },
-
-  getIndexOfValueFromAutoCompleteResult: function(aValue, aResult) {
-    for (let i = 0, maxi = aResult.matchCount; i < maxi; i++) {
-      if (aResult.getValueAt(i) == aValue)
-        return i;
-    }
-    return -1;
-  },
-
-  showImageFor: function(aParams) {
+  show: function(aParams) {
     var card          = aParams.card;
     var book          = aParams.book;
     var anchorElement = aParams.anchorElement;
@@ -139,7 +57,7 @@ var AbRecipientImagePopup = {
     this.popup.openPopup(aAnchorElement, 'after_start', -1, -1, false, true);
   },
 
-  hidePopup: function() {
+  hide: function() {
     this.popup.hidePopup();
   },
 
@@ -153,13 +71,9 @@ var AbRecipientImagePopup = {
         this.destroy();
         return;
 
-      case 'select':
-        this.handleSelectionChange(aEvent);
-        return;
-
       case 'popuphidden':
         if (aEvent.target != this.popup)
-          this.hidePopup();
+          this.hide();
         return;
     }
   }
