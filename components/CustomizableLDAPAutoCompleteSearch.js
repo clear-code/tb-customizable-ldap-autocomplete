@@ -17,14 +17,9 @@ XPCOMUtils.defineLazyModuleGetter(this,
 XPCOMUtils.defineLazyModuleGetter(this,
                                   "AutoCompleteResultCache",
                                   "resource://customizable-ldap-autocomplete-modules/AutoCompleteResultCache.jsm");
-XPCOMUtils.defineLazyServiceGetter(this, "Application",
-                                   "@mozilla.org/steel/application;1",
-                                   "steelIApplication");
-
-function log(aMessage) {
-  if (prefs.getPref("extensions.customizable-ldap-autocomplete@clear-code.com.debug"))
-    Application.console.log(aMessage);
-}
+XPCOMUtils.defineLazyModuleGetter(this,
+                                  "log",
+                                  "resource://customizable-ldap-autocomplete-modules/log.jsm");
 //======END OF INSERTED SECTION======
 
 const ACR = Components.interfaces.nsIAutoCompleteResult;

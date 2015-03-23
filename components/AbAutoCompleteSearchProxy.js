@@ -8,6 +8,9 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 XPCOMUtils.defineLazyModuleGetter(this,
                                   "AutoCompleteResultCache",
                                   "resource://customizable-ldap-autocomplete-modules/AutoCompleteResultCache.jsm");
+XPCOMUtils.defineLazyModuleGetter(this,
+                                  "log",
+                                  "resource://customizable-ldap-autocomplete-modules/log.jsm");
 
 function AbAutoCompleteSearchProxy() {
   this._internal = Components.classesByID["{2f946df9-114c-41fe-8899-81f10daf4f0c}"]
@@ -21,12 +24,14 @@ AbAutoCompleteSearchProxy.prototype = {
 
   startSearch: function startSearch(aSearchString, aParam,
                                     aPreviousResult, aListener) {
+    log("AbAutoCompleteSearchProxy.startSearch(" + aSearchString + ")");
     this._searchString = aSearchString;
     this._listener = aListener;
     return this._internal.startSearch(aSearchString, aParam, aPreviousResult, this);
   },
 
   stopSearch: function stopSearch() {
+    log("AbAutoCompleteSearchProxy.stopSearch for " + this._searchString);
     if (this._searchString)
       AutoCompleteResultCache.delete(this._searchString);
     this._listener = null;
@@ -37,12 +42,14 @@ AbAutoCompleteSearchProxy.prototype = {
   // nsIAutoCompleteObserver
 
   onSearchResult: function onSearchResult(aSearch, aResult) {
+    log("AbAutoCompleteSearchProxy.onSearchResult for " + aSearch + ", " + aResult);
     if (this._searchString)
       AutoCompleteResultCache.set('addressbook:' + this._searchString, aResult);
     return this._listener.onSearchResult(this, aResult);
   },
 
   onUpdateSearchResult: function onUpdateSearchResult(aSearch, aResult) {
+    log("AbAutoCompleteSearchProxy.onUpdateSearchResult for " + aSearch + ", " + aResult);
     if (this._searchString)
       AutoCompleteResultCache.set('addressbook:' + this._searchString, aResult);
     return this._listener.onUpdateSearchResult(this, aResult);
