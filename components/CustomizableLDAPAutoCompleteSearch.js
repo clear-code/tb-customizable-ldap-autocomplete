@@ -255,8 +255,8 @@ nsAbLDAPAutoCompleteSearch.prototype = {
     var acDirKeys = this.collectLDAPDirectoryKeys(acDirURI);
     if (acDirKeys.length > 0)
       acDirURI = acDirKeys[0];
-    log("nsAbLDAPAutoCompleteSearch.startSearch: acDirKeys = " + acDirKeys);
-    log("nsAbLDAPAutoCompleteSearch.startSearch: acDirURI = " + acDirURI);
+    log("  acDirKeys = " + acDirKeys);
+    log("  acDirURI = " + acDirURI);
 //======END OF INSERTED SECTION======
 
     if (!acDirURI) {
