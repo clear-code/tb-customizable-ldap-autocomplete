@@ -330,7 +330,7 @@ nsAbLDAPAutoCompleteSearch.prototype = {
       if (directoryServers == "*")
         directoryServers = prefs.getChildren("ldap_2.servers.");
       else
-        directoryServers = directoryServers.split(/(\s*[,\|]\s*|\s+)/);
+        directoryServers = directoryServers.split(/\s*[,\|]\s*|\s+/);
 
       directoryServers = directoryServers.filter(function(aServer) {
         var isPrimaryServer     = aPrimaryKey && aServer == aPrimaryKey;
