@@ -6,3 +6,5 @@
 //  1. use all LDAP servers: "*"
 //  2. use specific LDAP servers: "ldap_2.servers.key1,ldap_2.servers.key2,..."
 pref("extensions.customizable-ldap-autocomplete@clear-code.com.directoryServers", "*");
+
+pref("extensions.customizable-ldap-autocomplete@clear-code.com.debug", false);

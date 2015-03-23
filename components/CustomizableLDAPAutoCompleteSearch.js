@@ -17,6 +17,14 @@ XPCOMUtils.defineLazyModuleGetter(this,
 XPCOMUtils.defineLazyModuleGetter(this,
                                   "AutoCompleteResultCache",
                                   "resource://customizable-ldap-autocomplete-modules/AutoCompleteResultCache.jsm");
+XPCOMUtils.defineLazyServiceGetter(this, "Application",
+                                   "@mozilla.org/steel/application;1",
+                                   "steelIApplication");
+
+function log(aMessage) {
+  if (prefs.getPref("extensions.customizable-ldap-autocomplete@clear-code.com.debug"))
+    Application.console.log(aMessage);
+}
 //======END OF INSERTED SECTION======
 
 const ACR = Components.interfaces.nsIAutoCompleteResult;
@@ -151,6 +159,8 @@ nsAbLDAPAutoCompleteSearch.prototype = {
 //  _addToResult: function _addToResult(card) {
 //======BEGINNING OF INSERTED SECTION======
   _addToResult: function _addToResult(card, book) {
+    log("nsAbLDAPAutoCompleteSearch._addToResult(" +
+          card.displayName + " / " + card.primaryEmail + ", " + book.URI + ")");
 //======END OF INSERTED SECTION======
     let emailAddress =
       this._parser.makeMailboxObject(card.displayName,
@@ -250,6 +260,8 @@ nsAbLDAPAutoCompleteSearch.prototype = {
     var acDirKeys = this.collectLDAPDirectoryKeys(acDirURI);
     if (acDirKeys.length > 0)
       acDirURI = acDirKeys[0];
+    log("nsAbLDAPAutoCompleteSearch.startSearch: acDirKeys = " + acDirKeys);
+    log("nsAbLDAPAutoCompleteSearch.startSearch: acDirURI = " + acDirURI);
 //======END OF INSERTED SECTION======
 
     if (!acDirURI) {
@@ -318,6 +330,7 @@ nsAbLDAPAutoCompleteSearch.prototype = {
 
 //======BEGINNING OF INSERTED SECTION======
   collectLDAPDirectoryKeys: function collectLDAPDirectoryKeys(aPrimaryKey) {
+    log("nsAbLDAPAutoCompleteSearch.collectLDAPDirectoryKeys(" + aPrimaryKey + ")");
     var acDirKeys = [];
     if (aPrimaryKey)
       acDirKeys.push(aPrimaryKey);
@@ -332,6 +345,7 @@ nsAbLDAPAutoCompleteSearch.prototype = {
       else
         directoryServers = directoryServers.split(/\s*[,\|]\s*|\s+/);
 
+      log("  directoryServers = " + directoryServers);
       directoryServers = directoryServers.filter(function(aServer) {
         var isPrimaryServer     = aPrimaryKey && aServer == aPrimaryKey;
         var isDefaultPreference = aServer == "ldap_2.servers.default";
@@ -344,6 +358,8 @@ nsAbLDAPAutoCompleteSearch.prototype = {
   },
 
   startSearchFor: function startSearchFor(aSearchString, aAcDirKey) {
+    log("nsAbLDAPAutoCompleteSearch.startSearchFor(" + aSearchString + ", " + aAcDirKey + ")");
+    try {
     var uri = "moz-abldapdirectory://" + aAcDirKey;
     var context;
     if (uri in this._contexts) {
@@ -388,6 +404,7 @@ nsAbLDAPAutoCompleteSearch.prototype = {
     let filter = ldapSvc.createFilter(1024, filterTemplate, "", "", "", aSearchString);
     if (!filter)
       throw new Error("Filter string is empty, check if filterTemplate variable is valid in prefs.js.");
+    log("  filterTemplate = " + filterTemplate);
     args.typeSpecificArg = context.attributes;
     args.querySubDirectories = true;
     args.filter = filter;
@@ -414,6 +431,12 @@ nsAbLDAPAutoCompleteSearch.prototype = {
     context.finished = false;
     context.contextId =
       context.query.doQuery(context.book, args, listener, context.book.maxHits, 0);
+
+    }
+    catch(error) {
+      Components.utils.reportError(error);
+      throw error;
+    }
   },
 //======END OF INSERTED SECTION======
 
@@ -460,6 +483,8 @@ nsAbLDAPAutoCompleteSearch.prototype = {
 //  onSearchFoundCard: function onSearchFoundCard(aCard) {
 //======BEGINNING OF INSERTED SECTION======
   onSearchFoundCard: function onSearchFoundCard(aCard, aBook) {
+    log("nsAbLDAPAutoCompleteSearch.startSearchFor(" +
+          aCard.displayName + " / " + aCard.primaryEmail + ", " + aBook.URI + ")");
 //======END OF INSERTED SECTION======
     if (!this._listener)
       return;
