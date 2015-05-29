@@ -477,7 +477,7 @@ nsAbLDAPAutoCompleteSearch.prototype = {
                  aResult == nsIAbDirectoryQueryResultListener.queryResultStopped ? "stopped" :
                  aResult == nsIAbDirectoryQueryResultListener.queryResultError ? "error" :
                  "unknown(" + aResult + ")";
-    log("nsAbLDAPAutoCompleteSearch.onSearchFinished(" + result + ")");
+    log("nsAbLDAPAutoCompleteSearch.onSearchFinished(" + result + ", " + aErrorMsg + ")");
 //======END OF INSERTED SECTION======
     if (!this._listener)
       return;
