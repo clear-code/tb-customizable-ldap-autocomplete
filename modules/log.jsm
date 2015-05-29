@@ -14,6 +14,7 @@ XPCOMUtils.defineLazyServiceGetter(this, "Application",
                                    "steelIApplication");
 
 function log(aMessage) {
-  if (prefs.getPref("extensions.customizable-ldap-autocomplete@clear-code.com.debug"))
-    Application.console.log(aMessage);
+  if (!prefs.getPref("extensions.customizable-ldap-autocomplete@clear-code.com.debug"))
+    return;
+  Application.console.log(aMessage);
 }
