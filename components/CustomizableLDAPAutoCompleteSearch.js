@@ -508,6 +508,9 @@ nsAbLDAPAutoCompleteSearch.prototype = {
       });
       reportStatus(this._result.matchCount + " results found. (" + details.join(", ") + ")");
     }
+    else {
+      reportStatus("Stopped. (" + result + ")");
+    }
 //======END OF INSERTED SECTION======
     if (!this._listener)
       return;
