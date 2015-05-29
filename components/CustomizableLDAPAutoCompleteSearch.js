@@ -413,6 +413,9 @@ nsAbLDAPAutoCompleteSearch.prototype = {
     // nsIAbDirSearchListener
     let listener = {
       onSearchFinished: (function onSearchFinished(aResult, aErrorMsg) {
+        if (context.stopped)
+          return;
+
         context.finished = true;
         context.result   = aResult;
         context.errorMsg = aErrorMsg;
@@ -425,6 +428,8 @@ nsAbLDAPAutoCompleteSearch.prototype = {
         return this.onSearchFinished(aResult, aErrorMsg);
       }).bind(this),
       onSearchFoundCard: (function onSearchFoundCard(aCard) {
+        if (context.stopped)
+          return;
         return this.onSearchFoundCard(aCard, context.book);
       }).bind(this)
     };
@@ -451,6 +456,9 @@ nsAbLDAPAutoCompleteSearch.prototype = {
       Object.keys(this._contexts).forEach(function(aURI) {
         var context = this._contexts[aURI];
         context.query.stopQuery(context.contextId);
+        context.query = null;
+        context.stopped = true;
+        delete this._contexts[aURI]
       }, this);
       if (this._lastSearchString)
         AutoCompleteResultCache.delete('ldap:' + this._lastSearchString);
