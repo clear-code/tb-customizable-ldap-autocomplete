@@ -163,8 +163,10 @@ nsAbLDAPAutoCompleteSearch.prototype = {
                                      card.getProperty("Notes", "") || card.displayName :
                                      card.primaryEmail).toString();
 //======BEGINNING OF INSERTED SECTION======
-    if (!emailAddress)
+    if (!emailAddress) {
+      log("  => skipped: no email address.");
       return;
+    }
 //======END OF INSERTED SECTION======
 
     // If it is a duplicate, then just return and don't add it. The
@@ -440,6 +442,9 @@ nsAbLDAPAutoCompleteSearch.prototype = {
 //======END OF INSERTED SECTION======
 
   stopSearch: function stopSearch() {
+//======BEGINNING OF INSERTED SECTION======
+    log("nsAbLDAPAutoCompleteSearch.stopSearch for " + this._lastSearchString);
+//======END OF INSERTED SECTION======
     if (this._listener) {
 //      this._query.stopQuery(this._context);
 //======BEGINNING OF INSERTED SECTION======
