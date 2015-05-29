@@ -13,8 +13,23 @@ XPCOMUtils.defineLazyServiceGetter(this, "Application",
                                    "@mozilla.org/steel/application;1",
                                    "steelIApplication");
 
+var timer;
+var buffer = [];
+
 function log(aMessage) {
   if (!prefs.getPref("extensions.customizable-ldap-autocomplete@clear-code.com.debug"))
     return;
-  Application.console.log(aMessage);
+
+  buffer.push(aMessage);
+
+  if (timer)
+    timer.cancel();
+
+  timer = Components.classes["@mozilla.org/timer;1"]
+            .createInstance(Components.interfaces.nsITimer);
+  timer.init(function() {
+    timer = null;
+    Application.console.log(buffer.join('\n'));
+    buffer = [];
+  }, 100, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
 }
