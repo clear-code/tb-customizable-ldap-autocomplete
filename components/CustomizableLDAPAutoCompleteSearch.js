@@ -478,7 +478,7 @@ nsAbLDAPAutoCompleteSearch.prototype = {
 //  onSearchFoundCard: function onSearchFoundCard(aCard) {
 //======BEGINNING OF INSERTED SECTION======
   onSearchFoundCard: function onSearchFoundCard(aCard, aBook) {
-    log("nsAbLDAPAutoCompleteSearch.startSearchFor(" +
+    log("nsAbLDAPAutoCompleteSearch.onSearchFoundCard(" +
           aCard.displayName + " / " + aCard.primaryEmail + ", " + aBook.URI + ")");
 //======END OF INSERTED SECTION======
     if (!this._listener)
