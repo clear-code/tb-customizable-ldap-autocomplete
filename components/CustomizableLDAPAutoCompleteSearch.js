@@ -162,6 +162,10 @@ nsAbLDAPAutoCompleteSearch.prototype = {
                                      card.isMailList ?
                                      card.getProperty("Notes", "") || card.displayName :
                                      card.primaryEmail).toString();
+//======BEGINNING OF INSERTED SECTION======
+    if (!emailAddress)
+      return;
+//======END OF INSERTED SECTION======
 
     // If it is a duplicate, then just return and don't add it. The
     // _checkDuplicate function deals with it all for us.
