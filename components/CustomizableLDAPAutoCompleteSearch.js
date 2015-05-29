@@ -20,6 +20,9 @@ XPCOMUtils.defineLazyModuleGetter(this,
 XPCOMUtils.defineLazyModuleGetter(this,
                                   "log",
                                   "resource://customizable-ldap-autocomplete-modules/log.jsm");
+XPCOMUtils.defineLazyModuleGetter(this,
+                                  "reportStatus",
+                                  "resource://customizable-ldap-autocomplete-modules/reportStatus.jsm");
 //======END OF INSERTED SECTION======
 
 const ACR = Components.interfaces.nsIAutoCompleteResult;
@@ -321,6 +324,7 @@ nsAbLDAPAutoCompleteSearch.prototype = {
 //      this._query.doQuery(this._book, args, this, this._book.maxHits, 0);
 
 //======BEGINNING OF INSERTED SECTION======
+    reportStatus("Searching \"" + aSearchString + "\"...");
     acDirKeys.forEach(function(aAcDirKey) {
       this.startSearchFor(aSearchString, aAcDirKey);
     }, this);
@@ -482,6 +486,8 @@ nsAbLDAPAutoCompleteSearch.prototype = {
         prefs.getPref("extensions.customizable-ldap-autocomplete@clear-code.com.ignoreErrors") &&
         this._result.matchCount > 0)
       aResult = nsIAbDirectoryQueryResultListener.queryResultComplete;
+    if (aResult == nsIAbDirectoryQueryResultListener.queryResultComplete)
+      reportStatus(this._result.matchCount + " results found.");
 //======END OF INSERTED SECTION======
     if (!this._listener)
       return;

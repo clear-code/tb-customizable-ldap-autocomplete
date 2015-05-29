@@ -3,6 +3,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 (function(global) {
 
+var { Services } = Components.utils.import("resource://gre/modules/Services.jsm", {});
+var { STATUS_REPORTED } = Components.utils.import('resource://customizable-ldap-autocomplete-modules/reportStatus.jsm', {});
 var { AutoCompleteResultCache } = Components.utils.import('resource://customizable-ldap-autocomplete-modules/AutoCompleteResultCache.jsm', {});
 
 var AbRecipientImagePopupAutocomplete = {
@@ -10,11 +12,13 @@ var AbRecipientImagePopupAutocomplete = {
     window.removeEventListener('load', this, false);
     window.addEventListener('unload', this, false);
     window.addEventListener('select', this, true);
+    Services.obs.addObserver(this, STATUS_REPORTED, false);
   },
 
   destroy: function() {
     window.removeEventListener('unload', this, false);
     window.removeEventListener('select', this, true);
+    Services.obs.removeObserver(this, STATUS_REPORTED);
   },
 
   findOwnerRecipientField: function(aTarget) {
@@ -107,6 +111,11 @@ var AbRecipientImagePopupAutocomplete = {
         this.handleSelectionChange(aEvent);
         return;
     }
+  },
+
+  observe: function(aSubject, aTopic, aData) {
+    if (Services.prefs.getBoolPref("extensions.customizable-ldap-autocomplete@clear-code.com.debug"))
+      document.getElementById('statusText').setAttribute('label', aData);
   }
 };
 
