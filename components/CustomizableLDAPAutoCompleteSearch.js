@@ -471,6 +471,14 @@ nsAbLDAPAutoCompleteSearch.prototype = {
   // nsIAbDirSearchListener
 
   onSearchFinished: function onSearchFinished(aResult, aErrorMsg) {
+//======BEGINNING OF INSERTED SECTION======
+    var result = aResult == nsIAbDirectoryQueryResultListener.queryResultMatch ? "match" :
+                 aResult == nsIAbDirectoryQueryResultListener.queryResultComplete ? "complete" :
+                 aResult == nsIAbDirectoryQueryResultListener.queryResultStopped ? "stopped" :
+                 aResult == nsIAbDirectoryQueryResultListener.queryResultError ? "error" :
+                 "unknown(" + aResult + ")";
+    log("nsAbLDAPAutoCompleteSearch.onSearchFinished(" + result + ")");
+//======END OF INSERTED SECTION======
     if (!this._listener)
       return;
 
