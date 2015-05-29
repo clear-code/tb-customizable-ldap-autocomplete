@@ -49,6 +49,20 @@ nsAbLDAPAutoCompleteResult.prototype = {
   getBookAt: function getBookAt(aIndex) {
     return this._searchResults[aIndex].book;
   },
+
+  get matchCountPerBook() {
+    var report = {};
+    this._searchResults.forEach(function(aResult) {
+      if (!(aResult.book.URI in report)) {
+        report[aResult.book.URI] = {
+          book:  aResult.book.dirName,
+          count: 0
+        };
+      }
+      report[aResult.book.URI].count++;
+    });
+    return report;
+  },
 //======END OF INSERTED SECTION======
 
   // nsIAutoCompleteResult
@@ -486,8 +500,14 @@ nsAbLDAPAutoCompleteSearch.prototype = {
         prefs.getPref("extensions.customizable-ldap-autocomplete@clear-code.com.ignoreErrors") &&
         this._result.matchCount > 0)
       aResult = nsIAbDirectoryQueryResultListener.queryResultComplete;
-    if (aResult == nsIAbDirectoryQueryResultListener.queryResultComplete)
-      reportStatus(this._result.matchCount + " results found.");
+    if (aResult == nsIAbDirectoryQueryResultListener.queryResultComplete) {
+      let details = [];
+      let countPerBook = this._result.matchCountPerBook;
+      Object.keys(countPerBook).forEach(function(aURI) {
+        details.push(countPerBook[aURI].book + "=" + countPerBook[aURI].count);
+      });
+      reportStatus(this._result.matchCount + " results found. (" + details.join(", ") + ")");
+    }
 //======END OF INSERTED SECTION======
     if (!this._listener)
       return;
