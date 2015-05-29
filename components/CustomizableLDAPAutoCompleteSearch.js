@@ -478,6 +478,10 @@ nsAbLDAPAutoCompleteSearch.prototype = {
                  aResult == nsIAbDirectoryQueryResultListener.queryResultError ? "error" :
                  "unknown(" + aResult + ")";
     log("nsAbLDAPAutoCompleteSearch.onSearchFinished(" + result + ", " + aErrorMsg + ")");
+    if (aResult == nsIAbDirectoryQueryResultListener.queryResultError &&
+        prefs.getPref("extensions.customizable-ldap-autocomplete@clear-code.com.ignoreErrors") &&
+        this._result.matchCount > 0)
+      aResult = nsIAbDirectoryQueryResultListener.queryResultComplete;
 //======END OF INSERTED SECTION======
     if (!this._listener)
       return;

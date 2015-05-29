@@ -8,3 +8,4 @@
 pref("extensions.customizable-ldap-autocomplete@clear-code.com.directoryServers", "*");
 
 pref("extensions.customizable-ldap-autocomplete@clear-code.com.debug", false);
+pref("extensions.customizable-ldap-autocomplete@clear-code.com.ignoreErrors", true);
